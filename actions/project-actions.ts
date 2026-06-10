@@ -40,7 +40,7 @@ export async function uploadMediaAction(formData: FormData) {
     } = supabase.storage.from("media-uploads").getPublicUrl(uniqueFileName);
 
     const { data: dbData, error: dbError } = await supabase
-      .from("media-posts")
+      .from("media_posts")
       .insert({
         user_id: user.id,
         title: file.name,
