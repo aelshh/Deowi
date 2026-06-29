@@ -1,16 +1,19 @@
-import { generateMarketingKitFromTranscript } from "@/lib/ai/prompt";
+import {
+  generateMarketingKitFromTranscript,
+  RawTimestamp,
+} from "@/lib/ai/prompt";
 import { transcribeAudioFromUrl } from "@/lib/deepgram/transcribe";
-import { createClient } from "@/lib/server";
+import { createAdminClient } from "@/lib/server";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const supabaseAdmin = await createClient();
-  let mediaId: string | null = null;
+  const supabaseAdmin = createAdminClient();
+  let mediaId: string | null = null; 
 
   try {
     const body = await request.json();
-    mediaId = body.mediaId;
-    const { fileURL } = body;
+    const { mediaId: incomingMediaId, fileURL } = body;
+    mediaId = incomingMediaId;
 
     if (!mediaId || !fileURL) {
       return NextResponse.json(
@@ -41,8 +44,7 @@ export async function POST(request: Request) {
       !transcriptionResult.transcriptText
     ) {
       throw new Error(
-        "Failed to generate transction, error: ",
-        transcriptionResult.error,
+        `Failed to generate transcription: ${transcriptionResult.error}`,
       );
     }
 
@@ -57,10 +59,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const rawTimestamp = transcriptionResult.rawResult.results.utterances;
+    const utterances = transcriptionResult.rawResult.results.utterances;
+    if (!utterances || utterances.length === 0) {
+      throw new Error("No timestamped utterances found in Deepgram result");
+    }
+    const rawTimestamp = utterances as RawTimestamp;
 
     const aiResult = await generateMarketingKitFromTranscript(
       transcriptionResult.transcriptText,
+      rawTimestamp,
     );
 
     if (!aiResult || !aiResult.success || !aiResult.data) {
@@ -69,7 +76,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const { blogPost, xHooks, newsletter, linkedinHooks } = aiResult.data;
+    const { blogPost, xHooks, newsletter, linkedinHooks, chapters } =
+      aiResult.data;
 
     const { error: insertKitError } = await supabaseAdmin
       .from("marketing_kits")
@@ -81,6 +89,7 @@ export async function POST(request: Request) {
           x_hooks: xHooks,
           linkedin_hooks: linkedinHooks,
         },
+        chapters,
       });
 
     if (insertKitError) {
@@ -104,8 +113,8 @@ export async function POST(request: Request) {
       success: true,
       message: "Media processed and marketing kit generated",
     });
-  } catch (error: any) {
-    console.error("Critical failure in route, error: ", error);
+  } catch (err) {
+    console.error("Critical failure in route, error: ", err);
 
     if (mediaId) {
       await supabaseAdmin
@@ -114,10 +123,12 @@ export async function POST(request: Request) {
         .eq("id", mediaId);
     }
 
+    const errorMessage =
+      err instanceof Error ? err.message : "An unknown error occurred";
     return NextResponse.json(
       {
         success: false,
-        error: error.message || "Internal server error",
+        error: errorMessage,
       },
       { status: 500 },
     );

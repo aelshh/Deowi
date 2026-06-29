@@ -49,6 +49,49 @@ export type RawTimestamp = Array<{
   id: string;
 }>;
 
+function formatSecondsToTimestamp(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor(seconds % 3600);
+  const s = Math.floor(seconds % 60);
+
+  if (h > 0)
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+
+  return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
+
+function summarizeUtterances(rawTimestamp: RawTimestamp): string {
+  if (!rawTimestamp || rawTimestamp.length === 0) return "";
+
+  const buckets: Array<{ start: number; end: number; texts: string[] }> = [];
+
+  let currentBucket: { start: number; end: number; texts: string[] } | null =
+    null;
+
+  for (const utt of rawTimestamp) {
+    if (!currentBucket || utt.start - currentBucket.start >= 30) {
+      currentBucket = {
+        start: utt.start,
+        end: utt.end,
+        texts: [utt.transcript],
+      };
+      buckets.push(currentBucket);
+    } else {
+      currentBucket.end = utt.end;
+      currentBucket.texts.push(utt.transcript);
+    }
+  }
+
+  return buckets
+    .map((b) => {
+      const startStr = formatSecondsToTimestamp(b.start);
+      const endStr = formatSecondsToTimestamp(b.end);
+      const text = b.texts.join(" ").trim();
+      return `[${startStr} -> ${endStr}] ${text}`;
+    })
+    .join("\n");
+}
+
 export async function generateMarketingKitFromTranscript(
   transcript: string,
   rawTimestamp: RawTimestamp,
@@ -63,24 +106,24 @@ export async function generateMarketingKitFromTranscript(
     const { output } = await generateText({
       model: google("gemini-2.5-flash"),
       output: Output.object({ schema: marketingKitSchema }),
-      system: `You are an elite growth marketer and content strategist. Your job is to extract maximum value from raw audio or video transcripts. 
-      Analyze the provided transcript and generate an outstanding marketing kit matching the requested schema. 
-      Maintain the core technical accuracy, tone, and insights of the speaker, but polish the output to read like high-quality, professional copy written by a native writer. 
-      Do not include meta-commentary, placeholders, or conversational fluff. Write directly in your target formats.`,
-      prompt: `Here is the raw transcript:  \n\n ${transcript}`,
+      system: `You are an elite growth marketer and content strategist. Your job is to extract maximum value from raw audio or video transcripts.
+Analyze the provided transcript and generate an outstanding marketing kit matching the requested schema.
+Maintain the core technical accuracy, tone, and insights of the speaker, but polish the output to read like high-quality, professional copy written by a native writer.
+Do not include meta-commentary, placeholders, or conversational fluff. Write directly in your target formats.
+For the chapters field, use the provided timestamped utterances to determine accurate MM:SS or HH:MM:SS markers. Each chapter should reflect a real topic shift in the recording, not arbitrary splits.`,
+      prompt: `Here is the raw transcript:  \n\n ${transcript} \n\nHere are the timestamp utterances from the recording: \n\n${summarizeUtterances(rawTimestamp)}`,
     });
 
     return {
       success: true,
       data: output,
     };
-  } catch (error: any) {
-    console.error("AI wrapper failed: ", error);
+  } catch (err) {
+    console.error("AI wrapper failed: ", err);
+    const message = err instanceof Error ? err.message : "An unknown error occurred during AI content generation";
     return {
       success: false,
-      error:
-        error.message ||
-        "An unkown error occurred during AI content generation",
+      error: message,
     };
   }
 }

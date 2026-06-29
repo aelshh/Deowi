@@ -34,11 +34,12 @@ export async function transcribeAudioFromUrl(fileUrl: string) {
       transcriptText,
       rawResult: response,
     };
-  } catch (error: any) {
-    console.error("Transcripton wrapper failed: ", error);
+  } catch (err) {
+    console.error("Transcripton wrapper failed: ", err);
+    const message = err instanceof Error ? err.message : "An unknown error occurred";
     return {
       success: false,
-      error: error.message,
+      error: message,
     };
   }
 }
