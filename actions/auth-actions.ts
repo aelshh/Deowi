@@ -56,7 +56,7 @@ export async function signUpWithEmail(
     password,
     options: {
       data: { full_name: name || undefined },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/callback`,
     },
   });
 
@@ -69,7 +69,8 @@ export async function signUpWithEmail(
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  const origin = (await headers()).get("origin") || "http://localhost:3000";
+  const origin =
+    (await headers()).get("origin") || process.env.NEXT_PUBLIC_SUPABASE_URL;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -89,7 +90,8 @@ export async function signInWithGoogle() {
 
 export async function signInWithGithub() {
   const supabase = await createClient();
-  const origin = (await headers()).get("origin") || "http://localhost:3000";
+  const origin =
+    (await headers()).get("origin") || process.env.NEXT_PUBLIC_SUPABASE_URL;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
