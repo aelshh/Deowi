@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import { getUserMedia, verifySession } from "@/lib/dal";
-import { MediaTable } from "@/components/dashboard/media-table";
+import { MediaGrid } from "@/components/dashboard/media-grid";
 import { UploadDialog } from "@/components/dashboard/upload-dialog";
 import { Header } from "@/components/dashboard/header";
 
 async function MediaList() {
   const media = await getUserMedia();
-  return <MediaTable items={media} />;
+  return <MediaGrid items={media} />;
 }
 
 export default async function DashboardPage() {
@@ -25,11 +25,11 @@ export default async function DashboardPage() {
         </div>
         <Suspense
           fallback={
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-14 animate-pulse rounded-xl bg-muted/50"
+                  className="h-32 animate-pulse border-2 border-[#0A0A0A] bg-[#E5E4DE]/50"
                 />
               ))}
             </div>

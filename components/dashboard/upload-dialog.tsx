@@ -48,8 +48,8 @@ export function UploadDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Upload media</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="font-heading text-lg font-semibold uppercase tracking-tight">Upload media</DialogTitle>
+          <DialogDescription className="text-sm text-muted_foreground">
             Upload a podcast, meeting recording, or lecture. We support MP3,
             MP4, WAV, and more up to 2GB.
           </DialogDescription>
@@ -65,10 +65,10 @@ export function UploadDialog() {
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-colors",
+              "flex cursor-pointer flex-col items-center justify-center gap-3 border-2 p-10 text-center transition-all",
               dragOver
-                ? "border-primary bg-primary/5"
-                : "border-border hover:border-muted-foreground/30",
+                ? "border-accent bg-accent/5 shadow-[4px_4px_0_0_#FF3300]"
+                : "border-primary bg-surface shadow-[4px_4px_0_0_#0A0A0A]",
             )}
           >
             <input
@@ -81,22 +81,22 @@ export function UploadDialog() {
             />
             {file ? (
               <>
-                <FileAudio className="size-8 text-primary" />
+                <FileAudio className="size-8 text-accent" />
                 <div>
                   <p className="text-sm font-medium">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="font-mono text-xs text-muted_foreground">
                     {(file.size / 1024 / 1024).toFixed(1)} MB
                   </p>
                 </div>
               </>
             ) : (
               <>
-                <Upload className="size-8 text-muted-foreground" />
+                <Upload className="size-8 text-muted_foreground" />
                 <div>
                   <p className="text-sm font-medium">
                     Drop a file here or click to browse
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="font-mono text-xs text-muted_foreground">
                     MP3, MP4, WAV, MOV up to 2GB
                   </p>
                 </div>
@@ -105,7 +105,7 @@ export function UploadDialog() {
           </div>
 
           {state && !state.success && (
-            <div className="mt-3 flex items-center gap-2 text-xs text-destructive">
+            <div className="mt-3 flex items-center gap-2 font-mono text-xs text-destructive">
               <XCircle className="size-3.5" />
               {state.error || "Upload failed"}
             </div>

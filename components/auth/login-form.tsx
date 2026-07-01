@@ -16,10 +16,10 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-sm">
       <div className="mb-8">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight">
+        <h1 className="font-heading text-2xl font-semibold uppercase tracking-tight">
           Welcome back
         </h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
+        <p className="mt-1.5 text-sm text-muted_foreground">
           Sign in to your account to continue
         </p>
       </div>
@@ -31,10 +31,10 @@ export function LoginForm() {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border/40" />
+          <div className="w-full border-t-2 border-primary" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-background px-2 text-muted-foreground">
+          <span className="bg-background px-2 text-muted_foreground font-mono uppercase tracking-[0.1em]">
             or continue with email
           </span>
         </div>
@@ -42,7 +42,7 @@ export function LoginForm() {
 
       <form action={action} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="font-mono text-xs uppercase tracking-[0.1em]">Email</Label>
           <Input
             id="email"
             name="email"
@@ -53,7 +53,7 @@ export function LoginForm() {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="font-mono text-xs uppercase tracking-[0.1em]">Password</Label>
           <div className="relative">
             <Input
               id="password"
@@ -62,12 +62,12 @@ export function LoginForm() {
               placeholder="Enter your password"
               required
               autoComplete="current-password"
-              className="pr-9"
+              className="pr-10"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted_foreground hover:text-foreground"
               tabIndex={-1}
             >
               {showPassword ? (
@@ -80,7 +80,7 @@ export function LoginForm() {
         </div>
 
         {state?.error && (
-          <p className="text-xs text-destructive">{state.error}</p>
+          <p className="text-xs font-mono text-destructive">{state.error}</p>
         )}
 
         <Button type="submit" className="w-full" disabled={pending}>
@@ -95,11 +95,11 @@ export function LoginForm() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">
+      <p className="mt-6 text-center font-mono text-xs uppercase tracking-[0.1em] text-muted_foreground">
         Don&apos;t have an account?{" "}
         <Link
           href="/auth/signup"
-          className="font-medium text-primary hover:underline"
+          className="font-medium text-accent hover:underline"
         >
           Create one
         </Link>

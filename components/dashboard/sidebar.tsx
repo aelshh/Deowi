@@ -10,6 +10,7 @@ import {
   PanelLeftClose,
   PanelLeft,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useState } from "react";
 
 const navItems = [
@@ -23,24 +24,30 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside
-      className={cn(
-        "flex flex-col border-r border-border/40 bg-sidebar transition-all duration-200",
-        collapsed ? "w-16" : "w-56",
-      )}
+    <motion.aside
+      animate={{ width: collapsed ? 64 : 224 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className="flex flex-col border-r-2 border-primary bg-sidebar"
     >
-      <div className="flex h-14 items-center gap-2 border-b border-border/40 px-4">
+      <div className="flex h-14 items-center gap-2 border-b-2 border-primary px-4">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
+          <div className="flex size-7 shrink-0 items-center justify-center bg-primary text-xs font-bold text-primary-foreground shadow-[4px_4px_0_0_#0A0A0A]">
             D
           </div>
           {!collapsed && (
-            <span className="text-sm font-medium">Deowi</span>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-sm font-heading font-semibold"
+            >
+              Deowi
+            </motion.span>
           )}
         </Link>
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="ml-auto flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
+          className="ml-auto flex size-6 items-center justify-center text-muted_foreground transition-colors hover:text-foreground"
         >
           {collapsed ? (
             <PanelLeft className="size-4" />
@@ -61,18 +68,25 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "group relative flex items-center gap-2 px-3 py-2 font-mono text-sm font-medium uppercase tracking-[0.1em] transition-colors",
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  ? "text-sidebar-accent-foreground"
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
               )}
             >
+              {isActive && (
+                <motion.span
+                  layoutId="sidebar-active"
+                  className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 bg-accent"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
               <Icon className="size-4 shrink-0" />
               {!collapsed && <span>{item.label}</span>}
             </Link>
           );
         })}
       </nav>
-    </aside>
+    </motion.aside>
   );
 }

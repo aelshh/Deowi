@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function KitNotFound() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <div className="flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+      <div className="flex size-12 items-center justify-center border-2 border-[#0A0A0A] bg-[#E5E4DE] text-[#5C5C5C] shadow-[4px_4px_0_0_#0A0A0A]">
         <svg
           className="size-6"
           fill="none"
@@ -28,7 +28,7 @@ export default function KitNotFound() {
       </div>
       <Link
         href="/dashboard/kits"
-        className="inline-flex items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-muted"
+        className="inline-flex items-center justify-center border-2 border-[#0A0A0A] bg-[#FFFFFF] px-4 py-2 text-sm font-medium text-[#0A0A0A] shadow-[4px_4px_0_0_#0A0A0A] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_#0A0A0A]"
       >
         All kits
       </Link>

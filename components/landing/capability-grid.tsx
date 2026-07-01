@@ -1,101 +1,117 @@
-import { FileText, Hash, Mail, ListTree, Mic, Sparkles } from "lucide-react";
+"use client";
 
-const capabilities = [
+import { motion } from "framer-motion";
+import { FileText, Hash, Mail, ListTree, Mic, Sparkles } from "lucide-react";
+import { staggerContainer } from "@/lib/motion";
+
+interface Capability {
+  title: string;
+  description: string;
+  icon: typeof FileText;
+}
+
+const capabilities: Capability[] = [
   {
     title: "Blog Post",
     description:
       "A full-length article with your unique voice, formatted and ready to publish.",
     icon: FileText,
-    variant: "large" as const,
   },
   {
     title: "Social Hooks",
     description:
-      "X threads and LinkedIn posts that capture your key insights in shareable format.",
+      "X threads and LinkedIn posts that capture your key insights.",
     icon: Hash,
-    variant: "medium" as const,
   },
   {
     title: "Newsletter",
     description:
-      "A ready-to-send email digest with headlines, summaries, and CTAs.",
+      "A ready-to-send email digest with headlines and CTAs.",
     icon: Mail,
-    variant: "medium" as const,
   },
   {
     title: "Chapter Timeline",
     description:
-      "Auto-generated chapters with timestamps so you can navigate any recording.",
+      "Auto-generated chapters with timestamps for navigation.",
     icon: ListTree,
-    variant: "small" as const,
   },
   {
     title: "Transcription",
     description:
-      "Full transcript with speaker diarization — searchable and timestamped.",
+      "Full transcript with speaker diarization, searchable.",
     icon: Mic,
-    variant: "small" as const,
   },
   {
     title: "AI Summary",
     description:
-      "Key takeaways and action items extracted automatically from any conversation.",
+      "Key takeaways extracted automatically from any conversation.",
     icon: Sparkles,
-    variant: "small" as const,
   },
+];
+
+const gridClasses = [
+  "md:col-span-2 md:row-span-2 border-b-2 border-primary md:border-r-2 md:border-primary",
+  "md:col-span-2 border-b-2 border-primary",
+  "md:col-span-2 border-b-2 border-primary",
+  "md:col-span-1 border-b-2 border-primary md:border-b-0 md:border-r-2 md:border-primary",
+  "md:col-span-1 border-b-2 border-primary md:border-b-0 md:border-r-2 md:border-primary",
+  "md:col-span-1",
 ];
 
 export function CapabilityGrid() {
   return (
-    <section className="border-b border-border/40 py-24">
+    <section id="features" className="border-b-2 border-primary py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-3xl tracking-tight md:text-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: "easeOut" as const }}
+          className="mx-auto max-w-2xl text-center"
+        >
+          <p className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-muted_foreground">
+            Features
+          </p>
+          <h2 className="font-heading text-4xl font-semibold tracking-tighter uppercase md:text-5xl">
             Everything you need from one recording
           </h2>
-          <p className="mt-3 text-muted-foreground">
+          <p className="mt-4 text-base text-muted_foreground">
             One upload. Full marketing suite. No context switching.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-16 grid grid-cols-1 gap-4 md:grid-cols-4 md:grid-rows-2">
-          {capabilities.map((item) => {
+        <motion.div
+          className="mt-16 grid grid-cols-1 border-2 border-primary md:grid-cols-4"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+        >
+          {capabilities.map((item, i) => {
             const Icon = item.icon;
-            const isLarge = item.variant === "large";
-            const isMedium = item.variant === "medium";
-
+            const isLarge = i === 0;
             return (
-              <div
+              <motion.div
                 key={item.title}
-                className={`group relative rounded-xl bg-card p-6 shadow-xs ring-1 ring-foreground/5 transition-all hover:ring-primary/20 hover:shadow-sm ${
-                  isLarge ? "md:col-span-2 md:row-span-2 md:p-8" : ""
-                } ${isMedium ? "md:col-span-2" : ""}`}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: i * 0.05 } },
+                }}
+                className={`bg-surface p-6 md:p-8 relative ${gridClasses[i]}`}
               >
-                <div
-                  className={`mb-4 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary ${
-                    isLarge ? "size-12 rounded-xl" : ""
-                  }`}
-                >
-                  <Icon className={`${isLarge ? "size-6" : "size-5"}`} />
+                <div className="mb-4 flex size-10 items-center justify-center bg-accent text-accent_foreground shadow-[4px_4px_0_0_#0A0A0A]">
+                  <Icon className="size-5" />
                 </div>
-                <h3
-                  className={`font-heading font-medium text-foreground ${
-                    isLarge ? "text-xl" : "text-sm"
-                  }`}
-                >
+                <h3 className={`font-heading font-semibold uppercase tracking-tight text-foreground ${isLarge ? "text-2xl" : "text-lg"}`}>
                   {item.title}
                 </h3>
-                <p
-                  className={`mt-1.5 text-muted-foreground ${
-                    isLarge ? "text-sm leading-relaxed" : "text-xs"
-                  }`}
-                >
+                <p className="mt-2 text-sm leading-relaxed text-muted_foreground">
                   {item.description}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -11,7 +11,7 @@ export default function DashboardError({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <div className="flex size-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+      <div className="flex size-12 items-center justify-center border-2 border-[#0A0A0A] bg-[#FF3300] text-[#FFFFFF] shadow-[4px_4px_0_0_#0A0A0A]">
         <svg
           className="size-6"
           fill="none"

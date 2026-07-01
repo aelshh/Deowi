@@ -8,15 +8,15 @@ type KitPageProps = {
   params: Promise<{ id: string }>;
 };
 
-function CopyButton() {
+function CopyButton({ text }: { text: string }) {
   return (
-    <form>
+    <form
+      action={async () => {
+        "use server";
+      }}
+    >
       <button
-        formAction={async () => {
-          "use server";
-          // Copy functionality would go here
-        }}
-        className="inline-flex items-center gap-1 rounded-lg border border-border/40 px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        className="inline-flex items-center gap-1 border-2 border-[#0A0A0A] px-2.5 py-1 text-xs font-medium text-[#0A0A0A] transition-all hover:bg-[#FF3300] hover:text-[#FFFFFF]"
       >
         <ClipboardCopy className="size-3.5" />
         Copy
@@ -35,17 +35,17 @@ function SectionBlock({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-border/40 bg-card p-6 shadow-xs">
+    <div className="border-2 border-[#0A0A0A] bg-[#FFFFFF] p-6 shadow-[4px_4px_0_0_#0A0A0A]">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="flex size-8 items-center justify-center border-2 border-[#0A0A0A] bg-[#FF3300] text-[#FFFFFF]">
             <Icon className="size-4" />
           </div>
-          <h2 className="font-heading text-sm font-medium">{title}</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0A0A0A]">{title}</h2>
         </div>
-        <CopyButton />
+        <CopyButton text={title} />
       </div>
-      <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed text-foreground/80">
+      <div className="max-w-none text-sm leading-relaxed text-[#0A0A0A]/80">
         {children}
       </div>
     </div>
@@ -123,7 +123,7 @@ export default async function KitDetailPage({ params }: KitPageProps) {
               <ol className="space-y-2">
                 {chapters.map((ch: { title: string; timestamp: string }, i: number) => (
                   <li key={i} className="flex items-start gap-3 text-sm">
-                    <span className="mt-0.5 shrink-0 rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+                    <span className="mt-0.5 shrink-0 border border-[#0A0A0A] bg-[#E5E4DE] px-1.5 py-0.5 font-mono text-xs text-[#5C5C5C]">
                       {ch.timestamp}
                     </span>
                     <span>{ch.title}</span>
