@@ -1,3 +1,6 @@
+"use server";
+
+import { processMedia } from "@/lib/media/process-media";
 import { createClient } from "@/lib/server";
 import { revalidatePath } from "next/cache";
 
@@ -23,7 +26,7 @@ export async function uploadMediaAction(formData: FormData) {
     const fileExtention = file.name.split(".").pop();
     const uniqueFileName = `${user.id}-${Date.now()}.${fileExtention}`;
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from("media-uploads")
       .upload(uniqueFileName, file, {
         cacheControl: "3600",
@@ -40,7 +43,7 @@ export async function uploadMediaAction(formData: FormData) {
     } = supabase.storage.from("media-uploads").getPublicUrl(uniqueFileName);
 
     const { data: dbData, error: dbError } = await supabase
-      .from("media-posts")
+      .from("media_posts")
       .insert({
         user_id: user.id,
         title: file.name,
@@ -55,10 +58,16 @@ export async function uploadMediaAction(formData: FormData) {
       throw new Error("Failed to save project details to the database.");
     }
 
+    processMedia(dbData.id, publicUrl).catch((err) => {
+      console.error("Failed to trigger media processing", err);
+    });
+
     revalidatePath("/dashboard");
 
     return { success: true, project: dbData };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "An unknown error occurred";
+    return { success: false, error: message };
   }
 }
