@@ -60,7 +60,7 @@ function PasswordStrength({ password }: { password: string }) {
 export function SignupForm() {
   const [state, action, pending] = useActionState(signUpWithEmail, undefined);
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(""); 
 
   return (
     <div className="w-full max-w-sm">

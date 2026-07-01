@@ -1,5 +1,6 @@
 "use server";
 
+import { processMedia } from "@/lib/media/process-media";
 import { createClient } from "@/lib/server";
 import { revalidatePath } from "next/cache";
 
@@ -57,11 +58,16 @@ export async function uploadMediaAction(formData: FormData) {
       throw new Error("Failed to save project details to the database.");
     }
 
+    processMedia(dbData.id, publicUrl).catch((err) => {
+      console.error("Failed to trigger media processing", err);
+    });
+
     revalidatePath("/dashboard");
 
     return { success: true, project: dbData };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "An unknown error occurred";
+    const message =
+      err instanceof Error ? err.message : "An unknown error occurred";
     return { success: false, error: message };
   }
 }
