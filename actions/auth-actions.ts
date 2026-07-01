@@ -69,8 +69,7 @@ export async function signUpWithEmail(
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  const origin =
-    (await headers()).get("origin") || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -90,8 +89,7 @@ export async function signInWithGoogle() {
 
 export async function signInWithGithub() {
   const supabase = await createClient();
-  const origin =
-    (await headers()).get("origin") || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
