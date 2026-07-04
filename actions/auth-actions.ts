@@ -85,7 +85,7 @@ export async function signInWithGoogle() {
   if (data.url) {
     redirect(data.url);
   }
-}
+} 
 
 export async function signInWithGithub() {
   const supabase = await createClient();
