@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useActionState } from "react";
+import React, { useRef, useState, useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,26 +10,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { uploadMediaAction } from "@/actions/project-actions";
 import { Upload, FileAudio, Loader2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import axios from "axios";
 
 export function UploadDialog() {
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [state, action, pending] = useActionState(
-    async (_prev: unknown, formData: FormData) => {
-      const result = await uploadMediaAction(formData);
-      if (result.success) {
-        setFile(null);
-        setOpen(false);
-      }
-      return result;
-    },
-    undefined,
-  );
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -37,6 +30,75 @@ export function UploadDialog() {
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile) {
       setFile(droppedFile);
+    }
+  };
+
+  async function uploadFileToSignedUrl(
+    file: File,
+    signedUrl: string,
+    onProgress: (pct: number) => void,
+  ) {
+    await axios.put(signedUrl, file, {
+      headers: { "Content-Type": file.type },
+      onUploadProgress: (e) => {
+        if (e.total) onProgress(Math.round(e.loaded * 100) / e.total);
+      },
+    });
+  }
+
+  const handleSubmit = async (e: React.SubmitEvent) => {
+    e.preventDefault();
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+    setProgress(0);
+
+    try {
+      const urlRes = await axios.post(
+        "/api/upload-url",
+        {
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      if (urlRes.data.error) {
+        const err = urlRes.data.error;
+        throw new Error(err || "Failed to get upload URL");
+      }
+
+      const {
+        signedUrl,
+        storagePath,
+      }: { signedUrl: string; storagePath: string } = urlRes.data;
+
+      await uploadFileToSignedUrl(file, signedUrl, setProgress);
+
+      const completeRes = await axios.post(
+        "/api/upload-complete",
+        { storagePath },
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      if (completeRes.data.error) {
+        const err = completeRes.data.error;
+
+        throw new Error(err || "Failed to complete upload");
+      }
+
+      setUploadSuccess(true);
+      setOpen(false);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -48,14 +110,16 @@ export function UploadDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-heading text-lg font-semibold uppercase tracking-tight">Upload media</DialogTitle>
+          <DialogTitle className="font-heading text-lg font-semibold uppercase tracking-tight">
+            Upload media
+          </DialogTitle>
           <DialogDescription className="text-sm text-muted_foreground">
             Upload a podcast, meeting recording, or lecture. We support MP3,
             MP4, WAV, and more up to 2GB.
           </DialogDescription>
         </DialogHeader>
 
-        <form action={action}>
+        <form onSubmit={handleSubmit}>
           <div
             onDragOver={(e) => {
               e.preventDefault();
@@ -104,10 +168,10 @@ export function UploadDialog() {
             )}
           </div>
 
-          {state && !state.success && (
+          {uploadError && (
             <div className="mt-3 flex items-center gap-2 font-mono text-xs text-destructive">
               <XCircle className="size-3.5" />
-              {state.error || "Upload failed"}
+              {uploadError || "Upload failed"}
             </div>
           )}
 
@@ -119,21 +183,22 @@ export function UploadDialog() {
                 setFile(null);
                 setOpen(false);
               }}
-              disabled={pending}
+              disabled={uploading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!file || pending}>
-              {pending ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                "Upload"
-              )}
+            <Button type="submit" disabled={!file || uploading}>
+              Upload
             </Button>
           </div>
+          {uploading && (
+            <div className="mt-3 h-2 w-full border-2 border-prmary bg-surface">
+              <div
+                className="h-full bg-accent transition-all duratoin-300"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          )}
         </form>
       </DialogContent>
     </Dialog>
