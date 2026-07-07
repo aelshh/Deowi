@@ -13,7 +13,7 @@ const allowedMimeTypes = [
   "video/webm",
   "video/x-m4v",
 ];
-const maxFileSize = 524_288_000;
+const maxFileSize = 52_428_800;
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
   if (fileSize > maxFileSize) {
     return NextResponse.json(
-      { error: "File exceeds 500MB limit" },
+      { error: "File exceeds 50MB limit" },
       { status: 413 },
     );
   }
