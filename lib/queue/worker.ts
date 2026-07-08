@@ -66,7 +66,7 @@ export async function processNextJob() {
     return { processed: false, error: readError.message };
   }
 
-  if (!message || message.lenght === 0) return { processed: false };
+  if (!message || message.length === 0) return { processed: false };
   const msg = message[0] as PgmqMessage;
   const { jobId, postId, fileUrl, step, ...stepData } = msg.message;
 
