@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { FileAudio, ScrollText } from "lucide-react";
