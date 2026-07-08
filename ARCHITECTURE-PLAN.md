@@ -16,7 +16,7 @@
 
 ---
 
-## Recommended Architecture
+## Recommended Architecture3
 
 ### 1. Direct-to-Storage Upload (Presigned URLs)
 
