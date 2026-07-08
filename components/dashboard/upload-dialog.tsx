@@ -38,12 +38,20 @@ export function UploadDialog() {
     signedUrl: string,
     onProgress: (pct: number) => void,
   ) {
-    await axios.put(signedUrl, file, {
-      headers: { "Content-Type": file.type },
-      onUploadProgress: (e) => {
-        if (e.total) onProgress(Math.round(e.loaded * 100) / e.total);
-      },
-    });
+    try {
+      await axios.put(signedUrl, file, {
+        headers: { "Content-Type": file.type },
+        onUploadProgress: (e) => {
+          if (e.total) onProgress(Math.round(e.loaded * 100) / e.total);
+        },
+      });
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.data.error) {
+        setUploadError(err.response.data.error);
+      } else {
+        setUploadError(err instanceof Error ? err.message : "Upload failed");
+      }
+    } 
   }
 
   const handleSubmit = async (e: React.SubmitEvent) => {
@@ -96,7 +104,11 @@ export function UploadDialog() {
       setUploadSuccess(true);
       setOpen(false);
     } catch (err) {
-      setUploadError(err instanceof Error ? err.message : "Upload failed");
+      if (axios.isAxiosError(err) && err.response?.data.error)
+        setUploadError(err.response.data.error);
+      else {
+        setUploadError(err instanceof Error ? err.message : "Upload failed");
+      }
     } finally {
       setUploading(false);
     }
@@ -115,7 +127,7 @@ export function UploadDialog() {
           </DialogTitle>
           <DialogDescription className="text-sm text-muted_foreground">
             Upload a podcast, meeting recording, or lecture. We support MP3,
-            MP4, WAV, and more up to 2GB.
+            MP4, WAV, and more up to 50mb.
           </DialogDescription>
         </DialogHeader>
 
@@ -161,7 +173,7 @@ export function UploadDialog() {
                     Drop a file here or click to browse
                   </p>
                   <p className="font-mono text-xs text-muted_foreground">
-                    MP3, MP4, WAV, MOV up to 2GB
+                    MP3, MP4, WAV, MOV up to 50mb
                   </p>
                 </div>
               </>

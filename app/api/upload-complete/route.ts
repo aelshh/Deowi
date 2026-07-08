@@ -1,4 +1,4 @@
-import { processMedia } from "@/lib/media/process-media";
+import { enqueueJob } from "@/lib/queue/enqueue";
 import { createClient } from "@/lib/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -62,9 +62,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  processMedia(dbData.id, publicUrl).catch((err) => {
-    console.error("Processing failed: ", err);
-  });
+  const result = await enqueueJob({ postId: dbData.id, fileUrl: publicUrl });
+
+  if (!result.success) {
+    console.error("Enquue failed: ", result.error);
+  }
 
   return NextResponse.json({ success: true, mediaId: dbData.id });
 }
