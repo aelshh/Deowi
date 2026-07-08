@@ -6,7 +6,8 @@ import { Header } from "@/components/dashboard/header";
 
 async function MediaList() {
   const media = await getUserMedia();
-  return <MediaGrid items={media} />;
+  const user = await verifySession();
+  return <MediaGrid initialItems={media} userId={user.userId} />;
 }
 
 export default async function DashboardPage() {
