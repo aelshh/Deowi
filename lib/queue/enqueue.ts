@@ -35,15 +35,15 @@ export async function enqueueJob({ postId, fileUrl }: EnqueType) {
   });
 
   if (queueError) {
-    console.error("enqueue failed to send to pgmq: ", queueError);
+    console.error("enqueue failed to send to pgmq: ", JSON.stringify(queueError));
     await supabaseAdmin
       .from("processing_jobs")
       .update({
         status: "failed",
-        error: queueError.message,
+        error: typeof queueError === "string" ? queueError : queueError.message,
       })
       .eq("id", job.id);
-    return { success: false, error: queueError.message };
+    return { success: false, error: typeof queueError === "string" ? queueError : queueError.message };
   }
   await supabaseAdmin
     .from("processing_jobs")
@@ -51,5 +51,5 @@ export async function enqueueJob({ postId, fileUrl }: EnqueType) {
       status: "queued",
     })
     .eq("id", job.id);
-  return { success: false, jobId: job.id };
+  return { success: true, jobId: job.id };
 }
