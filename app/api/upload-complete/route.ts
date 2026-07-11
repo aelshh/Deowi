@@ -63,9 +63,10 @@ export async function POST(request: NextRequest) {
   }
 
   const result = await enqueueJob({ postId: dbData.id, fileUrl: publicUrl });
+  console.log("added job from transcribe from upload-compltet route : ");
 
   if (!result.success) {
-    console.error("Enquue failed: ", result.error);
+    console.error("Enqueue failed: ", result.error);
   }
 
   return NextResponse.json({ success: true, mediaId: dbData.id });
