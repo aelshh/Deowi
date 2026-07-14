@@ -60,14 +60,14 @@ export function MediaGrid({
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center border-2 border-primary bg-surface px-6 py-16 text-center shadow-[4px_4px_0_0_#0A0A0A]">
-        <div className="mb-4 flex size-12 items-center justify-center bg-accent text-accent_foreground shadow-[4px_4px_0_0_#0A0A0A]">
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-surface/50 px-6 py-16 text-center">
+        <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
           <FileAudio className="size-6" />
         </div>
-        <h3 className="font-heading text-base font-semibold uppercase tracking-tight">
+        <h3 className="text-base font-semibold">
           No media yet
         </h3>
-        <p className="mt-1 text-sm text-muted_foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           Upload your first recording to generate a marketing kit.
         </p>
       </div>
@@ -75,24 +75,24 @@ export function MediaGrid({
   }
 
   return (
-    <div className="grid gap-0 border-2 border-primary sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {initialItems.map((item) => (
         <Link
           key={item.id}
           href={
             item.status === "completed" ? `/dashboard/kits/${item.id}` : "#"
           }
-          className="group relative bg-surface p-5 transition-all hover:bg-muted/50 border-b-2 border-primary sm:border-b-2 sm:border-r-2 sm:border-primary last:border-b-0 sm:last:border-r-0 [&:nth-last-child(-n+3)]:border-b-0"
+          className="group relative rounded-2xl border border-border/50 bg-surface/50 p-5 transition-all duration-200 hover:border-border hover:bg-surface"
         >
           <div className="mb-3 flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center bg-accent text-accent_foreground shadow-[2px_2px_0_0_#0A0A0A]">
+            <div className="flex size-8 items-center justify-lg rounded-xl bg-accent/10 text-accent">
               <FileAudio className="size-4" />
             </div>
             <StatusBadge status={item.status} />
           </div>
           <p className="text-sm font-medium line-clamp-2">{item.title}</p>
           <div className="mt-3 flex items-center justify-between">
-            <p className="font-mono text-xs text-muted_foreground">
+            <p className="text-xs text-muted-foreground">
               {new Date(item.created_at).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -100,7 +100,7 @@ export function MediaGrid({
               })}
             </p>
             {item.status === "completed" && (
-              <span className="inline-flex items-center gap-1 font-mono text-xs font-medium uppercase tracking-[0.1em] text-accent opacity-0 transition-opacity group-hover:opacity-100">
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                 <ScrollText className="size-3.5" />
                 View kit
               </span>

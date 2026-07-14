@@ -68,84 +68,86 @@ export function Pricing() {
   const plans = yearly ? yearlyPlans : monthlyPlans;
 
   return (
-    <section id="pricing" className="border-b-2 border-primary py-24 md:py-32">
+    <section id="pricing" className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.5, ease: "easeOut" as const }}
           className="mx-auto max-w-2xl text-center"
         >
-          <p className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-muted_foreground">
-            Pricing
-          </p>
-          <h2 className="font-heading text-4xl font-semibold tracking-tighter uppercase md:text-5xl">
+          <p className="mb-4 text-sm text-accent font-medium">Pricing</p>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
             Simple, transparent pricing
           </h2>
-          <p className="mt-4 text-base text-muted_foreground">
+          <p className="mt-4 text-base text-muted-foreground">
             Start free. Upgrade when you need more.
           </p>
         </motion.div>
 
-        <div className="mt-10 flex items-center justify-center gap-3 font-mono text-sm uppercase tracking-[0.1em]">
-          <span className={yearly ? "text-muted_foreground" : "text-foreground font-semibold"}>
+        <div className="mt-10 flex items-center justify-center gap-3 text-sm">
+          <span className={yearly ? "text-muted-foreground" : "text-foreground font-semibold"}>
             Monthly
           </span>
           <button
             onClick={() => setYearly(!yearly)}
-            className={`relative inline-flex h-6 w-11 items-center border-2 border-primary transition-colors ${
-              yearly ? "bg-accent" : "bg-surface"
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+              yearly ? "bg-accent" : "bg-muted"
             }`}
           >
             <span
-              className={`inline-block size-4 bg-primary transition-transform ${
+              className={`inline-block size-4 rounded-full bg-white transition-transform duration-200 ${
                 yearly ? "translate-x-6" : "translate-x-1"
               }`}
             />
           </button>
-          <span className={yearly ? "text-foreground font-semibold" : "text-muted_foreground"}>
+          <span className={yearly ? "text-foreground font-semibold" : "text-muted-foreground"}>
             Yearly
           </span>
-          <span className="bg-accent px-2 py-0.5 text-xs font-mono text-accent_foreground uppercase tracking-[0.1em]">
+          <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-medium text-accent">
             Save 25%
           </span>
         </div>
 
         <motion.div
-          className="mt-10 grid gap-0 border-2 border-primary md:grid-cols-3"
+          className="mt-10 grid gap-4 md:grid-cols-3"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: "-60px" }}
         >
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
               variants={{
-                hidden: { opacity: 0, y: 20 },
+                hidden: { opacity: 0, y: 12 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: i * 0.05 } },
               }}
-              className={`bg-surface p-8 relative flex flex-col ${plan.popular ? "border-2 border-accent md:border-0 md:border-l-2 md:border-r-2 md:border-accent -mx-0.5 z-10 md:-mx-0" : ""} ${i < plans.length - 1 ? "border-b-2 border-primary md:border-b-0 md:border-r-2 md:border-primary" : ""}`}
+              className={`relative rounded-2xl p-8 flex flex-col transition-colors duration-200 ${
+                plan.popular
+                  ? "border-2 border-accent/50 bg-surface shadow-glow"
+                  : "border border-border/50 bg-surface/50 hover:border-border"
+              }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent px-3 py-1 text-xs font-mono uppercase tracking-[0.1em] text-accent_foreground shadow-[4px_4px_0_0_#0A0A0A]">
-                  Popular
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-medium text-white">
+                  Most Popular
                 </div>
               )}
               <div className="mb-6">
-                <h3 className="font-heading text-lg font-semibold uppercase tracking-tight">{plan.name}</h3>
+                <h3 className="text-lg font-semibold">{plan.name}</h3>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-heading text-4xl font-bold tracking-tighter">
+                  <span className="text-4xl font-bold tracking-tight">
                     {plan.price}
                   </span>
                   {plan.price !== "$0" && (
-                    <span className="text-sm font-mono text-muted_foreground">
+                    <span className="text-sm text-muted-foreground">
                       /{yearly ? "yr" : "mo"}
                     </span>
                   )}
                 </div>
-                <p className="mt-1.5 text-sm text-muted_foreground">
+                <p className="mt-1.5 text-sm text-muted-foreground">
                   {plan.description}
                 </p>
               </div>
@@ -153,19 +155,21 @@ export function Pricing() {
                 {plan.features.map((feature) => (
                   <li
                     key={feature}
-                    className="flex items-center gap-2 text-sm text-foreground/80"
+                    className="flex items-center gap-2.5 text-sm text-foreground/80"
                   >
-                    <Check className="size-4 shrink-0 text-accent" />
+                    <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/10">
+                      <Check className="size-3 text-accent" />
+                    </div>
                     {feature}
                   </li>
                 ))}
               </ul>
               <Link
                 href={plan.href}
-                className={`flex items-center justify-center gap-2 py-3 font-mono text-sm font-medium uppercase tracking-[0.2em] border-2 border-primary shadow-[4px_4px_0_0_#0A0A0A] transition-all hover:shadow-[8px_8px_0_0_#0A0A0A] hover:-translate-y-0.5 hover:-translate-x-0.5 ${
+                className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-all duration-200 ${
                   plan.popular
-                    ? "bg-accent text-accent_foreground"
-                    : "bg-surface text-primary"
+                    ? "bg-gradient-to-r from-accent to-accent-secondary text-white shadow-md hover:shadow-glow hover:brightness-110"
+                    : "border border-border bg-surface text-foreground hover:bg-surface-hover"
                 }`}
                 data-testid="cta-button"
               >

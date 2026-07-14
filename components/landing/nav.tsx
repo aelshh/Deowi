@@ -5,6 +5,7 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const navLinks = [
   { href: "#features", label: "Features" },
@@ -30,7 +31,7 @@ export function Nav() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
         scrolled
-          ? "border-b-2 border-primary bg-background"
+          ? "border-b border-border/50 bg-background/80 backdrop-blur-xl"
           : "bg-transparent",
       )}
       initial={{ y: -100 }}
@@ -44,11 +45,11 @@ export function Nav() {
         )}
       >
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
-          <Link href="/" className="flex items-center gap-2" data-testid="nav-logo">
-            <div className="flex size-8 items-center justify-center bg-primary text-sm font-bold text-primary-foreground shadow-[4px_4px_0_0_#0A0A0A]">
+          <Link href="/" className="flex items-center gap-2.5" data-testid="nav-logo">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary text-sm font-bold text-white">
               D
             </div>
-            <span className="text-sm font-heading font-semibold">Deowi</span>
+            <span className="text-sm font-semibold tracking-tight">Deowi</span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
@@ -56,23 +57,24 @@ export function Nav() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="relative text-sm font-mono uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
+                className="relative text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-2 md:flex">
+            <ThemeToggle />
             <Link
               href="/auth/login"
-              className="text-sm font-mono uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               Sign in
             </Link>
             <Link
               href="/auth/signup"
-              className="inline-flex h-9 items-center justify-center gap-1.5 bg-accent px-5 text-sm font-mono font-medium uppercase tracking-[0.2em] text-accent_foreground border-2 border-primary shadow-[4px_4px_0_0_#0A0A0A] hover:shadow-[8px_8px_0_0_#0A0A0A] hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all"
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-5 text-sm font-medium text-white shadow-md transition-all duration-200 hover:shadow-glow hover:brightness-110"
               data-testid="cta-button"
             >
               Get started
@@ -91,7 +93,7 @@ export function Nav() {
 
       {mobileOpen && (
         <motion.div
-          className="border-t-2 border-primary bg-background px-6 pb-6 pt-4 md:hidden"
+          className="border-t border-border/50 bg-background/95 backdrop-blur-xl px-6 pb-6 pt-4 md:hidden"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
@@ -102,23 +104,26 @@ export function Nav() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm font-mono uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
+                className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
-            <hr className="border-primary" />
-            <Link
-              href="/auth/login"
-              className="text-sm font-mono uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
-              onClick={() => setMobileOpen(false)}
-            >
-              Sign in
-            </Link>
+            <hr className="border-border/50" />
+            <div className="flex items-center justify-between">
+              <Link
+                href="/auth/login"
+                className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                onClick={() => setMobileOpen(false)}
+              >
+                Sign in
+              </Link>
+              <ThemeToggle />
+            </div>
             <Link
               href="/auth/signup"
-              className="inline-flex h-10 w-full items-center justify-center gap-1.5 bg-accent px-5 text-sm font-mono font-medium uppercase tracking-[0.2em] text-accent_foreground border-2 border-primary shadow-[4px_4px_0_0_#0A0A0A]"
+              className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-5 text-sm font-medium text-white shadow-md"
               onClick={() => setMobileOpen(false)}
               data-testid="cta-button"
             >

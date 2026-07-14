@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function DashboardNotFound() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-      <div className="flex size-12 items-center justify-center border-2 border-[#0A0A0A] bg-[#E5E4DE] text-[#5C5C5C] shadow-[4px_4px_0_0_#0A0A0A]">
+      <div className="flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
         <svg
           className="size-6"
           fill="none"
@@ -19,7 +19,7 @@ export default function DashboardNotFound() {
         </svg>
       </div>
       <div>
-        <h2 className="font-heading text-base font-medium">Page not found</h2>
+        <h2 className="text-base font-medium">Page not found</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           The page you&apos;re looking for doesn&apos;t exist or has been
           removed.
@@ -27,7 +27,7 @@ export default function DashboardNotFound() {
       </div>
       <Link
         href="/dashboard"
-        className="inline-flex items-center justify-center border-2 border-[#0A0A0A] bg-[#FFFFFF] px-4 py-2 text-sm font-medium text-[#0A0A0A] shadow-[4px_4px_0_0_#0A0A0A] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_#0A0A0A]"
+        className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-all duration-200 hover:bg-surface-hover"
       >
         Back to dashboard
       </Link>

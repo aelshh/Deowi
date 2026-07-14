@@ -12,11 +12,15 @@ export type SaveResult =
 export async function stepSave(
   mediaId: string,
   data: {
-    blogPost: string;
+    blogPost: {
+      title: string;
+      content: string;
+    };
     newsletter: string;
     xHooks: string[];
     linkedinHooks: string[];
     chapters: { timestamp: string; title: string }[];
+    subtitles: string;
   },
 ): Promise<SaveResult> {
   console.log(`Step:save, saving marketing kit for media: ${mediaId}`);
@@ -34,6 +38,7 @@ export async function stepSave(
         linkedin_hooks: data.linkedinHooks,
       },
       chapters: data.chapters,
+      subtitles: data.subtitles,
     });
 
   if (insertKitError) {

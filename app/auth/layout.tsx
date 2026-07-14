@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const testimonials = [
   {
@@ -39,10 +40,10 @@ function TestimonialCarousel() {
     <div className="max-w-sm space-y-8">
       <div className="space-y-2">
         <Sparkles className="size-8 text-accent" />
-        <h2 className="font-heading text-2xl font-semibold uppercase tracking-tight">
+        <h2 className="text-2xl font-bold tracking-tight">
           Turn recordings into
           <br />
-          <span className="text-accent">marketing kits</span>
+          <span className="text-gradient">marketing kits</span>
         </h2>
       </div>
 
@@ -54,7 +55,7 @@ function TestimonialCarousel() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeOut" as const }}
-            className="font-heading text-xl leading-snug tracking-tight"
+            className="text-xl leading-snug font-semibold tracking-tight"
           >
             &ldquo;{testimonials[index].quote}&rdquo;
           </motion.blockquote>
@@ -62,7 +63,7 @@ function TestimonialCarousel() {
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center border-2 border-primary bg-surface text-sm font-medium text-foreground shadow-[4px_4px_0_0_#0A0A0A]">
+        <div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-secondary text-sm font-medium text-white">
           {testimonials[index].author
             .split(" ")
             .map((n) => n[0])
@@ -70,7 +71,7 @@ function TestimonialCarousel() {
         </div>
         <div>
           <p className="text-sm font-semibold">{testimonials[index].author}</p>
-          <p className="text-xs font-mono uppercase tracking-[0.1em] text-muted_foreground">
+          <p className="text-xs text-muted-foreground">
             {testimonials[index].role}
           </p>
         </div>
@@ -81,22 +82,22 @@ function TestimonialCarousel() {
           <button
             key={i}
             onClick={() => setIndex(i)}
-            className={`h-1.5 transition-all ${
+            className={`h-1.5 rounded-full transition-all duration-200 ${
               i === index
                 ? "w-6 bg-accent"
-                : "w-1.5 bg-border hover:bg-muted_foreground/30"
+                : "w-1.5 bg-muted hover:bg-muted-foreground/30"
             }`}
           />
         ))}
       </div>
 
-      <div className="flex gap-6 font-mono text-xs uppercase tracking-[0.1em] text-muted_foreground">
+      <div className="flex gap-6 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
-          <span className="inline-block size-1.5 bg-accent" />
+          <span className="inline-block size-1.5 rounded-full bg-accent" />
           10x faster creation
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block size-1.5 bg-accent" />
+          <span className="inline-block size-1.5 rounded-full bg-accent" />
           99% accuracy
         </span>
       </div>
@@ -111,17 +112,20 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex min-h-dvh">
-      <div className="hidden w-1/2 flex-col justify-between bg-surface border-r-2 border-primary p-12 lg:flex">
-        <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center bg-primary text-sm font-bold text-primary-foreground shadow-[4px_4px_0_0_#0A0A0A]">
-            D
+      <div className="hidden w-1/2 flex-col justify-between bg-gradient-to-br from-surface to-background p-12 lg:flex">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary text-sm font-bold text-white">
+              D
+            </div>
+            <span className="text-sm font-semibold tracking-tight">Deowi</span>
           </div>
-          <span className="text-sm font-heading font-semibold">Deowi</span>
+          <ThemeToggle />
         </div>
 
         <TestimonialCarousel />
 
-        <p className="text-xs text-muted_foreground">
+        <p className="text-xs text-muted-foreground">
           &copy; {new Date().getFullYear()} Deowi. All rights reserved.
         </p>
       </div>

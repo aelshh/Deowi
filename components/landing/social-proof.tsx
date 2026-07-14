@@ -22,30 +22,30 @@ const companies = [
 
 export function SocialProof() {
   const headerRef = useRef<HTMLDivElement>(null);
-  const headerInView = useInView(headerRef, { once: true, margin: "-80px" });
+  const headerInView = useInView(headerRef, { once: true, margin: "-60px" });
 
   const logoRef = useRef<HTMLDivElement>(null);
-  const logoInView = useInView(logoRef, { once: true, margin: "-80px" });
+  const logoInView = useInView(logoRef, { once: true, margin: "-60px" });
 
   return (
-    <section className="border-b-2 border-primary py-20 md:py-24">
+    <section className="border-t border-border/50 py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
           ref={headerRef}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={headerInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: "easeOut" as const }}
-          className="grid gap-0 border-2 border-primary md:grid-cols-3"
+          className="grid gap-6 sm:grid-cols-3"
         >
-          {stats.map((stat, i) => (
+          {stats.map((stat) => (
             <div
               key={stat.label}
-              className={`flex flex-col items-center justify-center gap-1 p-8 ${i < stats.length - 1 ? "border-b-2 border-primary md:border-b-0 md:border-r-2 md:border-primary" : ""}`}
+              className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/50 bg-surface/50 p-8 backdrop-blur-sm"
             >
-              <span className="font-heading text-5xl font-bold tracking-tighter text-accent md:text-6xl">
+              <span className="text-5xl font-bold tracking-tight text-gradient md:text-6xl">
                 {stat.value}
               </span>
-              <span className="text-sm font-mono uppercase tracking-[0.1em] text-muted_foreground">
+              <span className="text-sm text-muted-foreground">
                 {stat.label}
               </span>
             </div>
@@ -54,19 +54,19 @@ export function SocialProof() {
 
         <motion.div
           ref={logoRef}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={logoInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" as const }}
-          className="mt-14"
+          transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" as const }}
+          className="mt-16"
         >
-          <p className="mb-8 text-center text-xs font-mono uppercase tracking-[0.2em] text-muted_foreground">
+          <p className="mb-8 text-center text-sm text-muted-foreground">
             Trusted by teams building in public
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-5">
             {companies.map((name) => (
               <span
                 key={name}
-                className="text-sm font-heading font-semibold uppercase tracking-tight text-muted_foreground/40 transition-colors hover:text-foreground cursor-default"
+                className="text-sm font-semibold tracking-tight text-muted-foreground/30 transition-colors duration-200 hover:text-foreground cursor-default"
               >
                 {name}
               </span>

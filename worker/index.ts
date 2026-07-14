@@ -115,6 +115,7 @@ const aiGenerateWorker = new Worker(
         xHooks: result.xHooks,
         linkedinHooks: result.linkedinHooks,
         chapters: result.chapters,
+        subtitles: result.subtitles,
       },
     });
 
