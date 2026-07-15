@@ -4,7 +4,6 @@ import { stepTranscribe } from "@/lib/media/step-transcribe";
 import {
   aiQueue,
   createRedisConnection,
-  mediaQueue,
   saveQueue,
 } from "@/lib/queue/queue";
 import { createAdminClient } from "@/lib/server";
