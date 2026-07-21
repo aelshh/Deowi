@@ -12,7 +12,7 @@ env:
 jobs:
   lint:
     name: Lint & Typecheck
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout-code@v4
@@ -104,7 +104,6 @@ jobs:
         run: |
           aws ecs wait service-stable --cluster $ECS_CLUSTER --services $ECS_WEB_SERVICE --region $AWS_REGION
 
-          
       - name: Wait for worker service stability
         run: |
           aws ecs wait service-stable --cluster $ECS_CLUSTER --services $ECS_WORKER_SERVICE --region $AWS_REGION
