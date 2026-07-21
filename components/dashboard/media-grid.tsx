@@ -1,12 +1,8 @@
 "use client";
 
-"use client";
-
 import Link from "next/link";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { FileAudio, ScrollText } from "lucide-react";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/client";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/client";
 
@@ -16,51 +12,6 @@ type MediaItem = {
   status: "pending" | "generating" | "completed" | "failed";
   created_at: string;
 };
-
-export function MediaGrid({
-  initialItems,
-  userId,
-}: {
-  initialItems: MediaItem[];
-  userId: string;
-}) {
-  const [items, setItems] = useState<MediaItem[]>(initialItems);
-
-  useEffect(() => {
-    const supabase = createClient();
-
-    const channel = supabase
-      .channel("media-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "media_posts",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            setItems((prev) => [...prev, payload.new as MediaItem]);
-          } else if (payload.eventType === "UPDATE") {
-            setItems((prev) =>
-              prev.map((item) =>
-                item.id === payload.new.id ? (payload.new as MediaItem) : item,
-              ),
-            );
-          } else if (payload.eventType === "DELETE") {
-            setItems((prev) =>
-              prev.filter((item) => item.id !== payload.old.id),
-            );
-          }
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userId]);
 
 export function MediaGrid({
   initialItems,
@@ -125,11 +76,10 @@ export function MediaGrid({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {initialItems.map((item) => (
+      {items.map((item) => (
         <Link
           key={item.id}
           href={
-            item.status === "completed" ? `/dashboard/kits/${item.id}` : "#"
             item.status === "completed" ? `/dashboard/kits/${item.id}` : "#"
           }
           className="group relative rounded-2xl border border-border/50 bg-surface/50 p-5 transition-all duration-200 hover:border-border hover:bg-surface"

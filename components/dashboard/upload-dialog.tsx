@@ -10,9 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Upload, FileAudio, Loader2, XCircle } from "lucide-react";
+import { Upload, FileAudio, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import axios from "axios";
 import axios from "axios";
 
 export function UploadDialog() {
@@ -20,10 +19,6 @@ export function UploadDialog() {
   const [file, setFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -56,7 +51,7 @@ export function UploadDialog() {
       } else {
         setUploadError(err instanceof Error ? err.message : "Upload failed");
       }
-    } 
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,7 +97,6 @@ export function UploadDialog() {
 
       if (completeRes.data.error) {
         const err = completeRes.data.error;
-
         throw new Error(err || "Failed to complete upload");
       }
 
@@ -127,17 +121,13 @@ export function UploadDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            Upload media
-          </DialogTitle>
+          <DialogTitle>Upload media</DialogTitle>
           <DialogDescription>
             Upload a podcast, meeting recording, or lecture. We support MP3,
-            MP4, WAV, and more up to 50mb.
             MP4, WAV, and more up to 50mb.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
         <form onSubmit={handleSubmit}>
           <div
             onDragOver={(e) => {
@@ -191,7 +181,6 @@ export function UploadDialog() {
             <div className="mt-3 flex items-center gap-2 text-xs text-destructive">
               <XCircle className="size-3.5" />
               {uploadError || "Upload failed"}
-              {uploadError || "Upload failed"}
             </div>
           )}
 
@@ -204,12 +193,9 @@ export function UploadDialog() {
                 setOpen(false);
               }}
               disabled={uploading}
-              disabled={uploading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!file || uploading}>
-              Upload
             <Button type="submit" disabled={!file || uploading}>
               Upload
             </Button>
