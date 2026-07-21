@@ -104,6 +104,7 @@ jobs:
         run: |
           aws ecs wait service-stable --cluster $ECS_CLUSTER --services $ECS_WEB_SERVICE --region $AWS_REGION
 
+          
       - name: Wait for worker service stability
         run: |
           aws ecs wait service-stable --cluster $ECS_CLUSTER --services $ECS_WORKER_SERVICE --region $AWS_REGION
