@@ -85,18 +85,24 @@ jobs:
           aws-region: ${{secrets.AWS_REGION}}
 
       - name: Register and deploy web service
+        id: deploy-web
         run: |
           sed -i "s|:IMAGE_TAG|:${{github.sha}}|g" task-definition-web.json
 
           TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-definition-web.json --query 'taskDefinition.taskDefinitionArn' --output text)
 
+          echo "task_def_arn=$TASK_DEF_ARN" >> $GITHUB_OUTPUT
+
           aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_WEB_SERVICE --task-definition $TASK_DEF_ARN --region $AWS_REGION
 
       - name: Register and deploy worker service
+        id: deploy-worker
         run: |
           sed -i "s|:IMAGE_TAG|:${{github.sha}}|g" task-definition-worker.json
 
           TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-definition-worker.json --query 'taskDefinition.taskDefinitionArn' --output text)
+
+          echo "task_def_arn=$TASK_DEF_ARN" >> $GITHUB_OUTPUT
 
           aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_WORKER_SERVICE --task-definition $TASK_DEF_ARN --region $AWS_REGION
 
@@ -107,3 +113,25 @@ jobs:
       - name: Wait for worker service stability
         run: |
           aws ecs wait services-stable --cluster $ECS_CLUSTER --services $ECS_WORKER_SERVICE --region $AWS_REGION
+
+      - name: Verify web deployment
+        run: |
+          ACTUAL=$(aws ecs describe-services --cluster $ECS_CLUSTER --services $ECS_WEB_SERVICE --query 'services[0].deployments[?status==`PRIMARY`].taskDefinition' --output text --region $AWS_REGION)
+          EXPECTED="${{steps.deploy-web.outputs.task_def_arn}}"
+          echo "Expected: $EXPECTED"
+          echo "Actual:   $ACTUAL"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Web deployment rolled back! ECS is running $ACTUAL instead of $EXPECTED"
+            exit 1
+          fi
+
+      - name: Verify worker deployment
+        run: |
+          ACTUAL=$(aws ecs describe-services --cluster $ECS_CLUSTER --services $ECS_WORKER_SERVICE --query 'services[0].deployments[?status==`PRIMARY`].taskDefinition' --output text --region $AWS_REGION)
+          EXPECTED="${{steps.deploy-worker.outputs.task_def_arn}}"
+          echo "Expected: $EXPECTED"
+          echo "Actual:   $ACTUAL"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::Worker deployment rolled back! ECS is running $ACTUAL instead of $EXPECTED"
+            exit 1
+          fi
