@@ -22,7 +22,6 @@ export function UploadDialog() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -100,7 +99,6 @@ export function UploadDialog() {
         throw new Error(err || "Failed to complete upload");
       }
 
-      setUploadSuccess(true);
       setOpen(false);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data.error)

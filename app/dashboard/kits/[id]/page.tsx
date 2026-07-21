@@ -16,7 +16,7 @@ type KitPageProps = {
   params: Promise<{ id: string }>;
 };
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton() {
   return (
     <form
       action={async () => {
@@ -51,7 +51,7 @@ function SectionBlock({
             {title}
           </h2>
         </div>
-        <CopyButton text={title} />
+        <CopyButton />
       </div>
       <div className="max-w-none text-sm leading-relaxed text-foreground/80">
         {children}

@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/server";
-import { headers } from "next/headers";
 
 type AuthState = { error?: string; success?: string } | undefined;
 

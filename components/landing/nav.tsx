@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -21,10 +21,6 @@ export function Nav() {
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 20);
   });
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, []);
 
   return (
     <motion.header

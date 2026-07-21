@@ -7,7 +7,7 @@ import {
   getSaveQueue,
 } from "../lib/queue/queue";
 import { createAdminClient } from "../lib/server";
-import { Worker } from "bullmq";
+import { Worker, Job } from "bullmq";
 
 function getConnection() {
   return createRedisConnection();
@@ -154,12 +154,13 @@ const saveWorker = new Worker(
   },
 );
 
-async function handleJobFail(job: any, error: Error) {
+async function handleJobFail(job: Job | undefined, error: Error) {
+  if (!job) return;
   const { jobId } = job.data;
 
   console.log(`Job: ${jobId} ${job.name} failed, error: ${error.message} `);
 
-  const isFinalFailure = job.attemptsMade >= job.opts.attempts;
+  const isFinalFailure = job.attemptsMade >= (job.opts.attempts ?? 3);
 
   const supabase = createAdminClient();
 
