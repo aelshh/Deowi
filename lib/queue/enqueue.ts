@@ -1,5 +1,5 @@
 import { createAdminClient } from "../server";
-import { transcriptionQueue } from "./queue";
+import { getTranscriptionQueue } from "./queue";
 
 type EnqueType = {
   postId: string;
@@ -29,7 +29,7 @@ export async function enqueueJob({ postId, fileUrl }: EnqueType) {
   }
 
   try {
-    await transcriptionQueue.add(
+    await getTranscriptionQueue().add(
       "transcribe",
       { jobId: job.id, postId, fileUrl },
       { jobId: job.id },

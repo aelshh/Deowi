@@ -1,0 +1,11 @@
+node_modules 
+.next
+.env 
+.env.local
+.env*.local 
+.git 
+.gitignore 
+README.md
+DEPLOYMENT-GUIDE.md
+ARCHITECTURE-PLAN.md
+GUIDE-FIX-MEDIA-KIT.md

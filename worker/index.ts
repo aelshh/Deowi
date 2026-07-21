@@ -1,15 +1,17 @@
-import { stepAiGenerate } from "@/lib/media/step-ai-generate";
-import { stepSave } from "@/lib/media/step-save";
-import { stepTranscribe } from "@/lib/media/step-transcribe";
+import { stepAiGenerate } from "../lib/media/step-ai-generate";
+import { stepSave } from "../lib/media/step-save";
+import { stepTranscribe } from "../lib/media/step-transcribe";
 import {
-  aiQueue,
+  getAiQueue,
   createRedisConnection,
-  saveQueue,
-} from "@/lib/queue/queue";
-import { createAdminClient } from "@/lib/server";
+  getSaveQueue,
+} from "../lib/queue/queue";
+import { createAdminClient } from "../lib/server";
 import { Worker } from "bullmq";
 
-const connection = createRedisConnection();
+function getConnection() {
+  return createRedisConnection();
+}
 
 async function updateJobStatus(
   jobId: string,
@@ -33,7 +35,7 @@ async function chainToAIGenerate(
   fileUrl: string,
   data: Record<string, unknown> = {},
 ) {
-  await aiQueue.add(
+  await getAiQueue().add(
     "ai_generate",
     {
       jobId,
@@ -51,7 +53,7 @@ async function chainToSave(
   fileUrl: string,
   data: Record<string, unknown> = {},
 ) {
-  await saveQueue.add(
+  await getSaveQueue().add(
     "save",
     {
       jobId,
@@ -86,7 +88,7 @@ const transcriptionWorker = new Worker(
     console.log(`Transcription job done: ${jobId}`);
   },
   {
-    connection,
+    connection: getConnection(),
     concurrency: 2,
     lockDuration: 120_000,
   },
@@ -121,7 +123,7 @@ const aiGenerateWorker = new Worker(
     console.log(`AI Generate job done: ${jobId}`);
   },
   {
-    connection,
+    connection: getConnection(),
     concurrency: 2,
     lockDuration: 600_000,
   },
@@ -146,7 +148,7 @@ const saveWorker = new Worker(
     console.log(`Job: ${jobId} done, all jobs completed`);
   },
   {
-    connection,
+    connection: getConnection(),
     concurrency: 5,
     lockDuration: 30_000,
   },

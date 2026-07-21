@@ -13,6 +13,13 @@
       "@/*": ["../*"]
     }
   },
-  "include": ["./**/*.ts", "../lib/**/*.ts"],
+  "include": [
+    "./**/*.ts",
+    "../lib/server.ts",
+    "../lib/ai/**/*.ts",
+    "../lib/deepgram/**/*.ts",
+    "../lib/media/**/*.ts",
+    "../lib/queue/**/*.ts"
+  ],
   "exclude": ["node_modules", "../node_modules"]
 }

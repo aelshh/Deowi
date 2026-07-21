@@ -1,0 +1,109 @@
+name: "Deploy on ECS"
+on:
+  push:
+    branches: [main]
+env:
+  AWS_REGION: ${{secrets.AWS_REGION}}
+  ECR_WEB_REPOSITORY: ${{secrets.ECR_WEB_REPOSITORY}}
+  ECR_WORKER_REPOSITORY: ${{secrets.ECR_WORKER_REPOSITORY}}
+  ECS_CLUSTER: deowi-cluster
+  ECS_WEB_SERVICE: deowi-web-service
+  ECS_WORKER_SERVICE: deowi-worker-service
+jobs:
+  lint:
+    name: Lint & Typecheck
+    runs-on: ubuntu-lastest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout-code@v4
+
+      - name: Setup node.js
+        uses: actions/setup-nodejs@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+
+      - name: lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+  build:
+    name: Build & push
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout-code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{secrets.AWS_REGION}}
+
+      - name: "Login to Amazon ECR"
+        id: "login-ecr"
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: "Build and push web image"
+        env:
+          ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
+          IMAGE_TAG: ${{github.sha}}
+        run: |
+          docker build -f docker/Dockerflie.web -t $ECR_WEB_REPOSITORY:$IMAGE_TAG . 
+          docker tag $ECR_WEB_REPOSIORY:$IMAGE_TAG $ECR_WEB_REPOSITORY:latest
+          docker push $ECR_WEB_REPOSITORY:$IMAGE_TAG 
+          docker push $ECR_WEB_REPOSITORY:latest
+
+      - name: "Build & push worker image"
+        env:
+          ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
+          IMAGE_TAG: ${{github.sha}}
+        run: |
+          docker build -f docker/Dockerfile.worker -t $ECR_WORKER_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_WORKER_REPOSITORY:$IMAGE_TAG $ECR_WORKER_REPOSITORY:latest 
+          docker push $ECR_WORKER_REPOSITORY:$IMAGE_TAG 
+          docker push $ECR_WORKER_REPOSITORY:latest
+
+  deploy:
+    name: "Deploy to ECS"
+    needs: "build"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACESS_KEY}}
+          aws-region: ${{secrets.AWS_REGION}}
+
+      - name: Register and deploy web service
+        run: |
+          sed -i "s|:IMAGE_TAG|:${{github.sha}}|g" task-definition-web.json
+
+          TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-definition-web.json --query 'taskDefinition.taskDefinitionArn' --output text)
+
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_WEB_SERVICE --task-definition $TASK_DEF_ARN --region $AWS_REGION
+
+      - name: Register and deploy worker service
+        run: |
+          sed -i "s|:IMAGE_TAG|:${{github.sha}}|g" task-definition-worker.json
+
+          TASK_DEF_ARN=$(aws ecs register-tasak-definition --cli-input-json file://task-definition-worker.json --query 'taskDefinition.taskDefinitionARn' --output text)
+
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_WEB_SERVICE --task-definition $TASK_DEF_ARN --region $AWS_REGION
+
+      - name: Wait for web service stability
+        run: |
+          aws ecs wait service-stable --cluster $ECS_CLUSTER --services $ECS_WEB_SERVICE --region $AWS_REGION
+
+      - name: Wait for worker service stability
+        run: |
+          aws ecs wait service-stable --cluster $ECS_CLUSTER --services $ECS_WORKER_SERVICE --region $AWS_REGION

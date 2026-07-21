@@ -1,0 +1,68 @@
+{
+  "family": "deowi-web",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::626185423401:role/deowi-ecs-task-execution-role",
+  "containerDefinitions": [
+    {
+      "name": "web",
+      "image": "626185423401.dkr.ecr.us-east-1.amazonaws.com/deowi-web:IMAGE_TAG",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        {
+          "name": "NEXT_PUBLIC_SUPABASE_URL",
+          "value": "https://hwxbimhcmeefolkrkajw.supabase.co"
+        },
+        {
+          "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+          "value": "sb_publishable_YeMbYdzhwRod7Ao929klPg_wobINmU5"
+        },
+        { "name": "NEXT_PUBLIC_SITE_URL", "value": "https://deowi.com" }
+      ],
+      "secrets": [
+        {
+          "name": "SUPABASE_SERVICE_ROLE_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/SUPABASE_SERVICE_ROLE_KEY"
+        },
+        {
+          "name": "DEEPGRAM_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/DEEPGRAM_API_KEY"
+        },
+        {
+          "name": "OPENROUTER_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/OPENROUTER_API_KEY"
+        },
+        {
+          "name": "REDIS_URL",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/REDIS_URL"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/deowi-web",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "web"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}
