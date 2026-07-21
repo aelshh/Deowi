@@ -7,8 +7,8 @@ env:
   ECR_WEB_REPOSITORY: ${{secrets.ECR_WEB_REPOSITORY}}
   ECR_WORKER_REPOSITORY: ${{secrets.ECR_WORKER_REPOSITORY}}
   ECS_CLUSTER: deowi-cluster
-  ECS_WEB_SERVICE: deowi-web-service
-  ECS_WORKER_SERVICE: deowi-worker-service
+  ECS_WEB_SERVICE: deowi-web-service-zb0s3at5
+  ECS_WORKER_SERVICE: deowi-worker-service-6g6g4ksv
 jobs:
   lint:
     name: Lint & Typecheck
