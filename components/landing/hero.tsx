@@ -1,14 +1,125 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileText, Mail, Hash, ListTree } from "lucide-react";
 import Link from "next/link";
 import { heroContainer, heroItem } from "@/lib/motion";
 
+function ProductMockup() {
+  return (
+    <motion.div
+      variants={heroItem}
+      className="mx-auto mt-16 max-w-4xl"
+    >
+      <div className="relative rounded-2xl border border-border/50 bg-surface/80 shadow-2xl backdrop-blur-sm overflow-hidden">
+        {/* Browser chrome */}
+        <div className="flex items-center gap-2 border-b border-border/50 bg-surface/50 px-4 py-3">
+          <div className="flex gap-1.5">
+            <div className="size-3 rounded-full bg-red-500/80" />
+            <div className="size-3 rounded-full bg-yellow-500/80" />
+            <div className="size-3 rounded-full bg-green-500/80" />
+          </div>
+          <div className="ml-4 flex-1 rounded-lg bg-background/50 px-3 py-1.5 text-xs text-muted-foreground">
+            deowi.app/dashboard/kits/episode-42
+          </div>
+        </div>
+
+        {/* App content */}
+        <div className="p-6 md:p-8">
+          {/* Header row */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Marketing Kit</h3>
+              <p className="text-sm text-muted-foreground">Episode 42: The Future of AI in Content</p>
+            </div>
+            <div className="hidden items-center gap-2 md:flex">
+              <span className="rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-600 dark:text-green-400">
+                Ready
+              </span>
+            </div>
+          </div>
+
+          {/* Audio waveform */}
+          <div className="mt-6 rounded-xl bg-background/50 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex size-10 items-center justify-center rounded-full bg-accent/10">
+                <div className="size-0 border-l-[10px] border-l-accent border-y-[6px] border-y-transparent ml-0.5" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-end gap-[2px] h-8">
+                  {Array.from({ length: 48 }).map((_, i) => {
+                    const height = Math.sin(i * 0.3) * 0.5 + 0.5;
+                    const isPlayed = i < 32;
+                    return (
+                      <div
+                        key={i}
+                        className={`w-1 rounded-full transition-colors ${isPlayed ? "bg-accent" : "bg-border"}`}
+                        style={{ height: `${Math.max(height * 100, 20)}%` }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+              <span className="text-xs text-muted-foreground font-mono">14:32</span>
+            </div>
+          </div>
+
+          {/* Content tabs */}
+          <div className="mt-6 flex gap-1 rounded-lg bg-background/50 p-1">
+            {[
+              { icon: FileText, label: "Blog Post", active: true },
+              { icon: Mail, label: "Newsletter", active: false },
+              { icon: Hash, label: "Social Hooks", active: false },
+              { icon: ListTree, label: "Chapters", active: false },
+            ].map((tab) => (
+              <div
+                key={tab.label}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                  tab.active
+                    ? "bg-accent/10 text-accent"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <tab.icon className="size-3" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Preview content */}
+          <div className="mt-6 rounded-xl border border-border/50 bg-background/30 p-6">
+            <div className="space-y-3">
+              <div className="h-5 w-3/4 rounded bg-foreground/10" />
+              <div className="h-3 w-full rounded bg-foreground/5" />
+              <div className="h-3 w-5/6 rounded bg-foreground/5" />
+              <div className="h-3 w-4/5 rounded bg-foreground/5" />
+              <div className="mt-4 h-3 w-2/3 rounded bg-foreground/5" />
+              <div className="h-3 w-full rounded bg-foreground/5" />
+              <div className="h-3 w-3/4 rounded bg-foreground/5" />
+            </div>
+            <div className="mt-4 flex gap-2">
+              <div className="h-6 w-16 rounded-full bg-accent/10" />
+              <div className="h-6 w-20 rounded-full bg-accent-secondary/10" />
+              <div className="h-6 w-14 rounded-full bg-accent/10" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Glow effect */}
+      <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 h-64 w-[500px] rounded-full bg-accent/15 blur-[100px]" />
+    </motion.div>
+  );
+}
+
 export function Hero() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-primary">
-      <div className="mx-auto max-w-6xl px-6 pb-32 pt-32 md:pb-40 md:pt-40">
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-accent/10 blur-[128px]" />
+        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-accent-secondary/10 blur-[128px]" />
+      </div>
+      <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-32 md:pb-24 md:pt-40">
         <motion.div
           className="mx-auto max-w-4xl text-center"
           variants={heroContainer}
@@ -17,35 +128,43 @@ export function Hero() {
         >
           <motion.p
             variants={heroItem}
-            className="mb-8 text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground"
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-surface/50 px-4 py-1.5 text-xs text-muted-foreground backdrop-blur-sm"
           >
+            <span className="size-1.5 rounded-full bg-green-500" />
             Powered by Gemini &amp; Deepgram
           </motion.p>
 
           <motion.h1
             variants={heroItem}
-            className="font-heading text-[clamp(2.5rem,5vw,4.5rem)] leading-[0.9] tracking-tighter uppercase"
+            className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
           >
             Turn Any Recording
             <br />
             Into A{" "}
-            <span className="text-accent">Marketing Kit</span>
+            <span className="text-gradient">Marketing Kit</span>
           </motion.h1>
+
+          <motion.p
+            variants={heroItem}
+            className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
+          >
+            Upload a podcast, meeting, or lecture. Get a blog post, newsletter, social hooks, and chapters — all in seconds.
+          </motion.p>
 
           <motion.div
             variants={heroItem}
-            className="mx-auto mt-10 max-w-2xl"
+            className="mx-auto mt-10 max-w-lg"
           >
-            <div className="flex items-center border-2 border-primary bg-surface shadow-[8px_8px_0_0_#0A0A0A]">
+            <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface p-2 shadow-lg backdrop-blur-sm">
               <input
                 type="text"
                 placeholder="Paste your recording URL..."
-                className="flex-1 bg-transparent px-6 py-5 text-lg font-mono placeholder:text-muted_foreground focus:outline-none md:text-2xl md:py-6"
+                className="flex-1 bg-transparent px-4 py-3 text-base placeholder:text-muted-foreground focus:outline-none"
                 data-testid="hero-input"
               />
               <Link
                 href="/auth/signup"
-                className="flex shrink-0 items-center gap-2 bg-accent px-6 py-5 font-mono text-sm font-medium uppercase tracking-[0.2em] text-accent_foreground border-l-2 border-primary md:py-6 md:px-8 hover:bg-accent/90 transition-colors"
+                className="flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-6 py-3 text-sm font-medium text-white shadow-md transition-all duration-200 hover:shadow-glow hover:brightness-110"
                 data-testid="cta-button"
               >
                 Generate
@@ -54,20 +173,13 @@ export function Hero() {
             </div>
           </motion.div>
 
-          <motion.p
-            variants={heroItem}
-            className="mt-3 text-xs font-mono text-muted_foreground"
-          >
-            Paste a URL or upload directly after signing up
-          </motion.p>
-
           <motion.div
             variants={heroItem}
-            className="mx-auto mt-10 flex max-w-sm gap-4"
+            className="mx-auto mt-10 flex max-w-sm gap-3"
           >
             <Link
               href="/auth/signup"
-              className="flex flex-1 items-center justify-center gap-2 bg-accent px-6 py-4 font-mono text-sm font-medium uppercase tracking-[0.2em] text-accent_foreground border-2 border-primary shadow-[4px_4px_0_0_#0A0A0A] hover:shadow-[8px_8px_0_0_#0A0A0A] hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-6 py-3.5 text-sm font-medium text-white shadow-md transition-all duration-200 hover:shadow-glow hover:brightness-110"
               data-testid="cta-button"
             >
               Get started free
@@ -75,7 +187,7 @@ export function Hero() {
             </Link>
             <Link
               href="#how-it-works"
-              className="flex flex-1 items-center justify-center gap-2 bg-surface px-6 py-4 font-mono text-sm font-medium uppercase tracking-[0.2em] text-primary border-2 border-primary shadow-[4px_4px_0_0_#0A0A0A] hover:shadow-[8px_8px_0_0_#0A0A0A] hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-6 py-3.5 text-sm font-medium text-foreground transition-all duration-200 hover:bg-surface-hover"
             >
               See how it works
             </Link>
@@ -83,15 +195,23 @@ export function Hero() {
 
           <motion.div
             variants={heroItem}
-            className="mt-10 flex items-center justify-center gap-8 font-mono text-xs uppercase tracking-[0.2em] text-muted_foreground"
+            className="mt-10 flex items-center justify-center gap-6 text-sm text-muted-foreground"
           >
-            <span className="text-foreground font-medium">10x faster</span>
-            <span className="text-muted_foreground/50">*</span>
-            <span className="text-foreground font-medium">99% accuracy</span>
-            <span className="text-muted_foreground/50">*</span>
-            <span className="text-foreground font-medium">5+ formats</span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-foreground font-medium">10x faster</span>
+            </span>
+            <span className="text-border">|</span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-foreground font-medium">99% accuracy</span>
+            </span>
+            <span className="text-border">|</span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-foreground font-medium">5+ formats</span>
+            </span>
           </motion.div>
         </motion.div>
+
+        <ProductMockup />
       </div>
     </section>
   );

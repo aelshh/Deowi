@@ -49,63 +49,52 @@ const capabilities: Capability[] = [
   },
 ];
 
-const gridClasses = [
-  "md:col-span-2 md:row-span-2 border-b-2 border-primary md:border-r-2 md:border-primary",
-  "md:col-span-2 border-b-2 border-primary",
-  "md:col-span-2 border-b-2 border-primary",
-  "md:col-span-1 border-b-2 border-primary md:border-b-0 md:border-r-2 md:border-primary",
-  "md:col-span-1 border-b-2 border-primary md:border-b-0 md:border-r-2 md:border-primary",
-  "md:col-span-1",
-];
-
 export function CapabilityGrid() {
   return (
-    <section id="features" className="border-b-2 border-primary py-24 md:py-32">
+    <section id="features" className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.5, ease: "easeOut" as const }}
           className="mx-auto max-w-2xl text-center"
         >
-          <p className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-muted_foreground">
-            Features
-          </p>
-          <h2 className="font-heading text-4xl font-semibold tracking-tighter uppercase md:text-5xl">
+          <p className="mb-4 text-sm text-accent font-medium">Features</p>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
             Everything you need from one recording
           </h2>
-          <p className="mt-4 text-base text-muted_foreground">
+          <p className="mt-4 text-base text-muted-foreground">
             One upload. Full marketing suite. No context switching.
           </p>
         </motion.div>
 
         <motion.div
-          className="mt-16 grid grid-cols-1 border-2 border-primary md:grid-cols-4"
+          className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: "-60px" }}
         >
           {capabilities.map((item, i) => {
             const Icon = item.icon;
-            const isLarge = i === 0;
             return (
               <motion.div
                 key={item.title}
                 variants={{
-                  hidden: { opacity: 0, y: 20 },
+                  hidden: { opacity: 0, y: 12 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: i * 0.05 } },
                 }}
-                className={`bg-surface p-6 md:p-8 relative ${gridClasses[i]}`}
+                whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                className="group rounded-2xl border border-border/50 bg-surface/50 p-6 backdrop-blur-sm transition-colors duration-200 hover:border-accent/20 hover:bg-surface"
               >
-                <div className="mb-4 flex size-10 items-center justify-center bg-accent text-accent_foreground shadow-[4px_4px_0_0_#0A0A0A]">
+                <div className="mb-4 flex size-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent/20">
                   <Icon className="size-5" />
                 </div>
-                <h3 className={`font-heading font-semibold uppercase tracking-tight text-foreground ${isLarge ? "text-2xl" : "text-lg"}`}>
+                <h3 className="text-lg font-semibold text-foreground">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted_foreground">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {item.description}
                 </p>
               </motion.div>

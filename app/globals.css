@@ -1,43 +1,70 @@
-@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@theme inline {
-  --color-background: #F4F3ED;
-  --color-foreground: #0A0A0A;
-  --color-surface: #FFFFFF;
-  --color-primary: #0A0A0A;
-  --color-primary-foreground: #F4F3ED;
-  --color-accent: #FF3300;
+@theme {
+  --color-background: #FFFFFF;
+  --color-foreground: #09090B;
+  --color-surface: #F4F4F5;
+  --color-surface-hover: #E4E4E7;
+  --color-primary: #09090B;
+  --color-primary-foreground: #FAFAFA;
+  --color-accent: #7C3AED;
   --color-accent-foreground: #FFFFFF;
-  --color-muted: #E5E4DE;
-  --color-muted-foreground: #5C5C5C;
-  --color-border: #0A0A0A;
-  --color-input: #0A0A0A;
-  --color-ring: #FF3300;
-  --color-destructive: #FF3300;
+  --color-accent-secondary: #06B6D4;
+  --color-muted: #F4F4F5;
+  --color-muted-foreground: #71717A;
+  --color-border: #E4E4E7;
+  --color-border-subtle: #F4F4F5;
+  --color-input: #E4E4E7;
+  --color-ring: #7C3AED;
+  --color-destructive: #EF4444;
   --color-card: #FFFFFF;
-  --color-card-foreground: #0A0A0A;
+  --color-card-foreground: #09090B;
   --color-popover: #FFFFFF;
-  --color-popover-foreground: #0A0A0A;
-  --color-secondary: #E5E4DE;
-  --color-secondary-foreground: #0A0A0A;
-  --color-sidebar: #F4F3ED;
-  --color-sidebar-foreground: #0A0A0A;
-  --color-sidebar-primary: #0A0A0A;
-  --color-sidebar-primary-foreground: #F4F3ED;
-  --color-sidebar-accent: #FF3300;
+  --color-popover-foreground: #09090B;
+  --color-secondary: #F4F4F5;
+  --color-secondary-foreground: #09090B;
+  --color-sidebar: #FAFAFA;
+  --color-sidebar-foreground: #71717A;
+  --color-sidebar-primary: #09090B;
+  --color-sidebar-primary-foreground: #FAFAFA;
+  --color-sidebar-accent: #7C3AED;
   --color-sidebar-accent-foreground: #FFFFFF;
-  --color-sidebar-border: #0A0A0A;
-  --color-sidebar-ring: #FF3300;
-  --font-sans: 'Satoshi', sans-serif;
-  --font-heading: 'Clash Display', sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
+  --color-sidebar-border: #E4E4E7;
+  --color-sidebar-ring: #7C3AED;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+.dark {
+  --color-background: #09090B;
+  --color-foreground: #FAFAFA;
+  --color-surface: #18181B;
+  --color-surface-hover: #27272A;
+  --color-primary: #FAFAFA;
+  --color-primary-foreground: #09090B;
+  --color-muted: #27272A;
+  --color-muted-foreground: #A1A1AA;
+  --color-border: #27272A;
+  --color-border-subtle: #1E1E22;
+  --color-input: #27272A;
+  --color-card: #18181B;
+  --color-card-foreground: #FAFAFA;
+  --color-popover: #18181B;
+  --color-popover-foreground: #FAFAFA;
+  --color-secondary: #27272A;
+  --color-secondary-foreground: #FAFAFA;
+  --color-sidebar: #0F0F12;
+  --color-sidebar-foreground: #A1A1AA;
+  --color-sidebar-primary: #FAFAFA;
+  --color-sidebar-primary-foreground: #09090B;
+  --color-sidebar-border: #27272A;
 }
 
 @layer base {
@@ -45,12 +72,24 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
   }
   code, kbd, samp, pre {
     @apply font-mono;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent via-accent-secondary to-accent bg-clip-text text-transparent;
+  }
+  .shadow-glow {
+    box-shadow: 0 0 30px -8px rgba(124, 58, 237, 0.25);
+  }
+  .shadow-glow-lg {
+    box-shadow: 0 0 60px -8px rgba(124, 58, 237, 0.3);
   }
 }

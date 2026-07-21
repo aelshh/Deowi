@@ -1,0 +1,22 @@
+{
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx --import ./preload.ts start.ts",
+    "start": "node --import ./dist/worker/preload.js dist/worker/start.js",
+    "build": "tsc --project tsconfig.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bullmq": "^5.80.1",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.2"
+  }
+}

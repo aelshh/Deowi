@@ -12,7 +12,7 @@ export function SocialButton({
   return (
     <Button
       variant="outline"
-      className="w-full gap-2 font-mono text-xs"
+      className="w-full gap-2 text-sm"
       onClick={onClick}
     >
       {provider === "google" ? (

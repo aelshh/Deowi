@@ -28,12 +28,12 @@ function PasswordStrength({ password }: { password: string }) {
         {[1, 2, 3, 4].map((level) => (
           <div
             key={level}
-            className={`h-1 flex-1 transition-colors ${
+            className={`h-1 flex-1 rounded-full transition-colors duration-200 ${
               metCount >= level
                 ? metCount >= 3
-                  ? "bg-accent"
-                  : "bg-accent/60"
-                : "bg-border"
+                  ? "bg-green-500"
+                  : "bg-yellow-500"
+                : "bg-muted"
             }`}
           />
         ))}
@@ -42,12 +42,12 @@ function PasswordStrength({ password }: { password: string }) {
         {checks.map((check) => (
           <li
             key={check.label}
-            className="flex items-center gap-1.5 font-mono text-xs text-muted_foreground"
+            className="flex items-center gap-1.5 text-xs text-muted-foreground"
           >
             {check.met ? (
-              <Check className="size-3 text-accent" />
+              <Check className="size-3 text-green-500" />
             ) : (
-              <X className="size-3 text-muted_foreground/50" />
+              <X className="size-3 text-muted-foreground/50" />
             )}
             {check.label}
           </li>
@@ -65,10 +65,10 @@ export function SignupForm() {
   return (
     <div className="w-full max-w-sm">
       <div className="mb-8">
-        <h1 className="font-heading text-2xl font-semibold uppercase tracking-tight">
+        <h1 className="text-2xl font-bold tracking-tight">
           Create your account
         </h1>
-        <p className="mt-1.5 text-sm text-muted_foreground">
+        <p className="mt-1.5 text-sm text-muted-foreground">
           It&apos;s free and takes about 30 seconds
         </p>
       </div>
@@ -80,10 +80,10 @@ export function SignupForm() {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t-2 border-primary" />
+          <div className="w-full border-t border-border/50" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-background px-2 text-muted_foreground font-mono uppercase tracking-[0.1em]">
+          <span className="bg-background px-2 text-muted-foreground">
             or continue with email
           </span>
         </div>
@@ -91,7 +91,7 @@ export function SignupForm() {
 
       <form action={action} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name" className="font-mono text-xs uppercase tracking-[0.1em]">Full name</Label>
+          <Label htmlFor="name" className="text-xs text-muted-foreground">Full name</Label>
           <Input
             id="name"
             name="name"
@@ -101,7 +101,7 @@ export function SignupForm() {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email" className="font-mono text-xs uppercase tracking-[0.1em]">Email</Label>
+          <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
           <Input
             id="email"
             name="email"
@@ -112,7 +112,7 @@ export function SignupForm() {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password" className="font-mono text-xs uppercase tracking-[0.1em]">Password</Label>
+          <Label htmlFor="password" className="text-xs text-muted-foreground">Password</Label>
           <div className="relative">
             <Input
               id="password"
@@ -128,7 +128,7 @@ export function SignupForm() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted_foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               tabIndex={-1}
             >
               {showPassword ? (
@@ -142,10 +142,10 @@ export function SignupForm() {
         </div>
 
         {state?.error && (
-          <p className="text-xs font-mono text-destructive">{state.error}</p>
+          <p className="text-xs text-destructive">{state.error}</p>
         )}
         {state?.success && (
-          <p className="text-xs font-mono text-accent">{state.success}</p>
+          <p className="text-xs text-green-500">{state.success}</p>
         )}
 
         <Button type="submit" className="w-full" disabled={pending}>
@@ -159,7 +159,7 @@ export function SignupForm() {
           )}
         </Button>
 
-        <p className="font-mono text-xs text-muted_foreground">
+        <p className="text-xs text-muted-foreground">
           By creating an account, you agree to our{" "}
           <Link href="#" className="underline underline-offset-2 hover:text-foreground">
             Terms of Service
@@ -172,7 +172,7 @@ export function SignupForm() {
         </p>
       </form>
 
-      <p className="mt-6 text-center font-mono text-xs uppercase tracking-[0.1em] text-muted_foreground">
+      <p className="mt-6 text-center text-xs text-muted-foreground">
         Already have an account?{" "}
         <Link
           href="/auth/login"

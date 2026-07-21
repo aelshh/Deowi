@@ -1,0 +1,31 @@
+{
+  "family": "deowi-worker",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::626185423401:role/deowi-ecs-task-execution-role",
+  "containerDefinitions": [
+    {
+      "name": "worker",
+      "image": "626185423401.dkr.ecr.us-east-1.amazonaws.com/deowi-worker:IMAGE_TAG",
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" }
+      ],
+      "secrets": [
+        { "name": "SUPABASE_SERVICE_ROLE_KEY", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/SUPABASE_SERVICE_ROLE_KEY" },
+        { "name": "DEEPGRAM_API_KEY", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/DEEPGRAM_API_KEY" },
+        { "name": "OPENROUTER_API_KEY", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/OPENROUTER_API_KEY" },
+        { "name": "REDIS_URL", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/REDIS_URL" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/deowi-worker",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "worker"
+        }
+      }
+    }
+  ]
+}

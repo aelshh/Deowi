@@ -14,11 +14,12 @@ type PgmqMessage = {
     transcription: string;
     rawTimeStamp: unknown;
     kitData?: {
-      blogPost: string;
+      blogPost: { title: string; content: string };
       newsletter: string;
       xHooks: string[];
       linkedinHooks: string[];
       chapters: { timestamp: string; title: string }[];
+      subtitles: string;
     };
   };
 };
@@ -127,7 +128,8 @@ export async function processNextJob() {
                 newsletter: result.newsletter,
                 xHooks: result.xHooks,
                 linkedinHooks: result.linkedinHooks,
-                chapter: result.chapters,
+                chapters: result.chapters,
+                subtitles: result.subtitles,
               },
             }),
           });

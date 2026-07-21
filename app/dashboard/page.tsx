@@ -30,7 +30,7 @@ export default async function DashboardPage() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-32 animate-pulse border-2 border-[#0A0A0A] bg-[#E5E4DE]/50"
+                  className="h-32 animate-pulse rounded-2xl bg-muted/30"
                 />
               ))}
             </div>

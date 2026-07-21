@@ -1,0 +1,18 @@
+FROM node:20-alpine AS base 
+
+WORKDIR /app 
+COPY package.json package-lock.json ./ 
+RUN npm ci 
+
+COPY worker/package.json worker/package-lock.json ./worker/
+RUN cd worker && npm ci 
+
+COPY lib/ ./lib/ 
+COPY worker/ ./worker/ 
+
+RUN cd worker && npx tsc --project tsconfig.json 
+
+RUN npm prune --omit=dev && cd worker && npm prune --omit=dev 
+
+USER node 
+CMD ["node", "--import", "./worker/dist/worker/preload.js", "./worker/dist/worker/start.js"]

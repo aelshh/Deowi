@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useActionState } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Upload, FileAudio, Loader2, XCircle } from "lucide-react";
+import { Upload, FileAudio, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 
@@ -51,10 +51,10 @@ export function UploadDialog() {
       } else {
         setUploadError(err instanceof Error ? err.message : "Upload failed");
       }
-    } 
+    }
   }
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) return;
 
@@ -97,7 +97,6 @@ export function UploadDialog() {
 
       if (completeRes.data.error) {
         const err = completeRes.data.error;
-
         throw new Error(err || "Failed to complete upload");
       }
 
@@ -122,10 +121,8 @@ export function UploadDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-heading text-lg font-semibold uppercase tracking-tight">
-            Upload media
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted_foreground">
+          <DialogTitle>Upload media</DialogTitle>
+          <DialogDescription>
             Upload a podcast, meeting recording, or lecture. We support MP3,
             MP4, WAV, and more up to 50mb.
           </DialogDescription>
@@ -141,10 +138,10 @@ export function UploadDialog() {
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-3 border-2 p-10 text-center transition-all",
+              "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-all duration-200",
               dragOver
-                ? "border-accent bg-accent/5 shadow-[4px_4px_0_0_#FF3300]"
-                : "border-primary bg-surface shadow-[4px_4px_0_0_#0A0A0A]",
+                ? "border-accent bg-accent/5"
+                : "border-border hover:border-border",
             )}
           >
             <input
@@ -160,19 +157,19 @@ export function UploadDialog() {
                 <FileAudio className="size-8 text-accent" />
                 <div>
                   <p className="text-sm font-medium">{file.name}</p>
-                  <p className="font-mono text-xs text-muted_foreground">
+                  <p className="text-xs text-muted-foreground">
                     {(file.size / 1024 / 1024).toFixed(1)} MB
                   </p>
                 </div>
               </>
             ) : (
               <>
-                <Upload className="size-8 text-muted_foreground" />
+                <Upload className="size-8 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">
                     Drop a file here or click to browse
                   </p>
-                  <p className="font-mono text-xs text-muted_foreground">
+                  <p className="text-xs text-muted-foreground">
                     MP3, MP4, WAV, MOV up to 50mb
                   </p>
                 </div>
@@ -181,7 +178,7 @@ export function UploadDialog() {
           </div>
 
           {uploadError && (
-            <div className="mt-3 flex items-center gap-2 font-mono text-xs text-destructive">
+            <div className="mt-3 flex items-center gap-2 text-xs text-destructive">
               <XCircle className="size-3.5" />
               {uploadError || "Upload failed"}
             </div>
@@ -204,11 +201,11 @@ export function UploadDialog() {
             </Button>
           </div>
           {uploading && (
-            <div className="mt-3 h-2 w-full border-2 border-prmary bg-surface">
+            <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div
-                className="h-full bg-accent transition-all duratoin-300"
+                className="h-full rounded-full bg-gradient-to-r from-accent to-accent-secondary transition-all duration-300"
                 style={{ width: `${progress}%` }}
-              ></div>
+              />
             </div>
           )}
         </form>
