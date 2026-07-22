@@ -22,6 +22,10 @@
           "value": "https://hwxbimhcmeefolkrkajw.supabase.co"
         },
         {
+          "name": "HOSTNAME",
+          "value": "0.0.0.0"
+        },
+        {
           "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
           "value": "sb_publishable_YeMbYdzhwRod7Ao929klPg_wobINmU5"
         },
