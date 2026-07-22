@@ -186,7 +186,7 @@ export async function generateMarketingKitFromTranscript(
   error?: string;
 }> {
   try {
-    console.log("Initializing Gemini 2.5 Flash for high-context generation");
+    console.log("Initializing Nemotron 3 Ultra for high-context generation");
 
     const { output } = await generateText({
       model: openrouter("nvidia/nemotron-3-ultra-550b-a55b:free"),

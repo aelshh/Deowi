@@ -32,22 +32,15 @@ Client ──► GET /api/upload-url (returns presigned PUT URL)
 ### 2. Job Queue (Decoupled Workers)
 
 ```
-Upload complete ──► Queue (pgmq / Inngest / BullMQ) ──► Worker Pool
-                                                          ├── Transcribe Worker (Deepgram)
-                                                          ├── AI Generate Worker (Gemini)
-                                                          └── Save Results Worker
+Upload complete ──► Queue (BullMQ + Redis) ──► Worker Pool
+                                               ├── Transcribe Worker (Deepgram)
+                                               ├── AI Generate Worker (Nemotron)
+                                               └── Save Results Worker
 ```
 
 **Why**: Decouples the web server from CPU-bound work. Workers can retry, scale independently, and run in the background without impacting API response times.
 
-**Options (ranked):**
-| Option | Infra Required | Pros | Cons |
-|---|---|---|---|
-| Inngest | None (serverless) | Retries, rate limiting, steps, Vercel-native | Vendor lock-in |
-| pgmq (Supabase Queue) | Existing Postgres | Zero extra infra, ACID, pg native | Need polling or LISTEN/NOTIFY |
-| BullMQ + Redis (Upstash) | Redis | Most mature, great DX, concurrency control | Extra infra cost |
-
-**Recommended**: Start with **pgmq** (no infra overhead) or **Inngest** (best DX for serverless).
+**Chosen**: **BullMQ + Redis (Upstash)** — mature, great DX, concurrency control, proven at scale.
 
 ### 3. Multi-Step Pipeline (Event-Driven)
 
@@ -69,7 +62,7 @@ Each step is an idempotent handler with its own queue or queue stage:
 
 ```
                          ┌──────────────────────┐
-                         │   Job Queue (pgmq)    │
+                         │  Job Queue (BullMQ)   │
                          └──────┬───────────────┘
                                 │
                     ┌───────────┼───────────┐
@@ -160,7 +153,7 @@ Add `retry_count` (int) to track overall retries.
        │  POST /api/upload-complete               │ Storage webhook
        ▼                                          ▼
 ┌────────────────┐                   ┌──────────────────────┐
-│   Next.js API   │                  │   Job Queue (pgmq)    │
+│   Next.js API   │                  │  Job Queue (BullMQ)   │
 │  (lightweight)  │ ──► enqueue ──►  │  (retry, rate-limit)  │
 └────────────────┘                   └──────────┬───────────┘
                                                 │
@@ -193,7 +186,7 @@ Add `retry_count` (int) to track overall retries.
 ### Phase 1: Reliability (immediate)
 1. Add `processing_jobs` table migration
 2. Replace fire-and-forget `processMedia()` with queue enqueue action
-3. Create a simple polling worker (runs as a Next.js route or cron job)
+3. Create BullMQ worker service (Node.js, ECS Fargate)
 4. Split `process-media.ts` into separate step handlers
 5. Add Supabase Realtime subscription to dashboard
 
@@ -216,7 +209,7 @@ Add `retry_count` (int) to track overall retries.
 | Concern | Best Choice (for this stack) | Why |
 |---|---|---|
 | **File upload** | Supabase Storage signed URLs | Already using Supabase, zero extra infra |
-| **Job queue** | pgmq (Supabase Queue) or Inngest | pgmq = no infra. Inngest = best DX |
+| **Job queue** | BullMQ + Redis (Upstash) | Mature, concurrency control, proven at scale |
 | **Workers** | Next.js API routes → dedicated Node service | Incremental migration path |
 | **Real-time** | Supabase Realtime subscriptions | Built-in, native WebSocket |
 | **CDN** | Supabase Storage built-in CDN + Cloudflare fronting | Global edge caching |
