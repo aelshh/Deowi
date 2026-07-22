@@ -25,7 +25,7 @@
           "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
           "value": "sb_publishable_YeMbYdzhwRod7Ao929klPg_wobINmU5"
         },
-        { "name": "NEXT_PUBLIC_SITE_URL", "value": "https://deowi.com" }
+        { "name": "NEXT_PUBLIC_SITE_URL", "value": "https://deowi.tech" }
       ],
       "secrets": [
         {
