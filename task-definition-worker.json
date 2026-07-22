@@ -10,13 +10,29 @@
       "name": "worker",
       "image": "626185423401.dkr.ecr.us-east-1.amazonaws.com/deowi-worker:IMAGE_TAG",
       "environment": [
-        { "name": "NODE_ENV", "value": "production" }
+        { "name": "NODE_ENV", "value": "production" },
+        {
+          "name": "NEXT_PUBLIC_SUPABASE_URL",
+          "value": "https://hwxbimhcmeefolkrkajw.supabase.co"
+        }
       ],
       "secrets": [
-        { "name": "SUPABASE_SERVICE_ROLE_KEY", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/SUPABASE_SERVICE_ROLE_KEY" },
-        { "name": "DEEPGRAM_API_KEY", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/DEEPGRAM_API_KEY" },
-        { "name": "OPENROUTER_API_KEY", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/OPENROUTER_API_KEY" },
-        { "name": "REDIS_URL", "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/REDIS_URL" }
+        {
+          "name": "SUPABASE_SERVICE_ROLE_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/SUPABASE_SERVICE_ROLE_KEY"
+        },
+        {
+          "name": "DEEPGRAM_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/DEEPGRAM_API_KEY"
+        },
+        {
+          "name": "OPENROUTER_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/OPENROUTER_API_KEY"
+        },
+        {
+          "name": "REDIS_URL",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/REDIS_URL"
+        }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
