@@ -1,12 +1,91 @@
-import { generateText, Output } from "ai";
-// import { google } from "@ai-sdk/google";
+import { generateText, Output, type LanguageModel } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
+import { createGroq } from "@ai-sdk/groq";
 import { z } from "zod";
 
 const openrouter = createOpenAI({
   baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY, 
+  apiKey: process.env.OPENROUTER_API_KEY ?? "",
 });
+
+const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY ?? "",
+});
+
+const gemini = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "",
+});
+
+interface ProviderConfig {
+  name: string;
+  model: LanguageModel;
+}
+
+function getProviderChain(): ProviderConfig[] {
+  const chain: ProviderConfig[] = [];
+
+  if (process.env.OPENROUTER_API_KEY) {
+    chain.push({
+      name: "OpenRouter/Nemotron",
+      model: openrouter("nvidia/nemotron-3-ultra-550b-a55b:free"),
+    });
+  }
+  if (process.env.GROQ_API_KEY) {
+    chain.push({
+      name: "Groq/Llama-3.3-70B",
+      model: groq("llama-3.3-70b-versatile"),
+    });
+  }
+  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    chain.push({
+      name: "Google/Gemini-2.0-Flash",
+      model: gemini("gemini-2.0-flash"),
+    });
+  }
+
+  return chain;
+}
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function generateWithFallback<T>(fn: (provider: ProviderConfig) => Promise<T>): Promise<T> {
+  const providers = getProviderChain();
+  let lastError: unknown;
+
+  for (let i = 0; i < providers.length; i++) {
+    const provider = providers[i];
+    const maxRetries = 2;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        if (attempt > 0) {
+          const delay = Math.pow(2, attempt) * 2000;
+          console.log(`[${provider.name}] Retry ${attempt}/${maxRetries} after ${delay}ms`);
+          await sleep(delay);
+        }
+
+        console.log(`[${provider.name}] Attempting generation...`);
+        const result = await fn(provider);
+        console.log(`[${provider.name}] Generation succeeded`);
+        return result;
+      } catch (err) {
+        lastError = err;
+        const errMsg = err instanceof Error ? err.message : String(err);
+        console.warn(`[${provider.name}] Failed (attempt ${attempt + 1}): ${errMsg.slice(0, 200)}`);
+
+        if (attempt < maxRetries) continue;
+
+        console.warn(`[${provider.name}] Exhausted retries, trying next provider`);
+        break;
+      }
+    }
+  }
+
+  throw lastError;
+}
 
 export const blogPostSchema = z.object({
   title: z
@@ -186,30 +265,25 @@ export async function generateMarketingKitFromTranscript(
   error?: string;
 }> {
   try {
-    console.log("Initializing Nemotron 3 Ultra for high-context generation");
-
-    const { output } = await generateText({
-      model: openrouter("nvidia/nemotron-3-ultra-550b-a55b:free"),
-      maxOutputTokens: 32768,
-      output: Output.object({ schema: marketingKitSchema }),
-      system: marketingKitSystemPrompt,
-      prompt: `Here is the raw transcript:  \n\n ${transcript} \n\nHere are the timestamp utterances from the recording: \n\n${summarizeUtterances(rawTimestamp)}`,
+    const output = await generateWithFallback(async (provider) => {
+      const { output } = await generateText({
+        model: provider.model,
+        maxOutputTokens: 32768,
+        output: Output.object({ schema: marketingKitSchema }),
+        system: marketingKitSystemPrompt,
+        prompt: `Here is the raw transcript:  \n\n ${transcript} \n\nHere are the timestamp utterances from the recording: \n\n${summarizeUtterances(rawTimestamp)}`,
+      });
+      return output;
     });
 
-    return {
-      success: true,
-      data: output,
-    };
+    return { success: true, data: output };
   } catch (err) {
-    console.error("AI wrapper failed: ", err);
+    console.error("Marketing kit generation failed across all providers: ", err);
     const message =
       err instanceof Error
         ? err.message
         : "An unknown error occurred during AI content generation";
-    return {
-      success: false,
-      error: message,
-    };
+    return { success: false, error: message };
   }
 }
 
@@ -277,37 +351,33 @@ export async function generateBlogPostFromTranscript(
     const wordCountEstimate = estimateBlogWordCount(rawTimestamp);
     const timestampContext = summarizeUtterances(rawTimestamp);
 
-    const { text } = await generateText({
-      model: openrouter("nvidia/nemotron-3-ultra-550b-a55b:free"),
-      maxOutputTokens: 32768,
-      system:
-        blogPostSystemPrompt +
-        "\n\nOUTPUT FORMAT: Start with a # Markdown heading for the title, then write the full blog post content below it. Return ONLY the markdown — no JSON, no wrapping.",
-      prompt: `Write a blog post of ${wordCountEstimate}
+    const text = await generateWithFallback(async (provider) => {
+      const { text } = await generateText({
+        model: provider.model,
+        maxOutputTokens: 32768,
+        system:
+          blogPostSystemPrompt +
+          "\n\nOUTPUT FORMAT: Start with a # Markdown heading for the title, then write the full blog post content below it. Return ONLY the markdown — no JSON, no wrapping.",
+        prompt: `Write a blog post of ${wordCountEstimate}
 
     Here is the raw transcript: 
     ${transcript}
     Here are the timestamped sections for reference (use these to ensure accurate time references in the blog post):
     ${timestampContext}`,
+      });
+      return text;
     });
 
     const titleMatch = text.match(/^#\s+(.+)/m);
     const title = titleMatch?.[1]?.trim() ?? "Untitled";
     const content = text.replace(/^#\s+.+\n?/, "").trim();
 
-    return {
-      success: true,
-      data: { title, content },
-    };
+    return { success: true, data: { title, content } };
   } catch (error) {
-    console.error("Blog post generation failed: ", error);
+    console.error("Blog post generation failed across all providers: ", error);
     const message =
-      error instanceof Error ? error.message : "Blog post generate failed";
-
-    return {
-      success: false,
-      error: message,
-    };
+      error instanceof Error ? error.message : "Blog post generation failed";
+    return { success: false, error: message };
   }
 }
 

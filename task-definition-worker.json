@@ -30,6 +30,14 @@
           "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/OPENROUTER_API_KEY"
         },
         {
+          "name": "GROQ_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/GROQ_API_KEY"
+        },
+        {
+          "name": "GOOGLE_GENERATIVE_AI_API_KEY",
+          "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/GOOGLE_GENERATIVE_AI_API_KEY"
+        },
+        {
           "name": "REDIS_URL",
           "valueFrom": "arn:aws:ssm:us-east-1:626185423401:parameter/deowi/REDIS_URL"
         }
