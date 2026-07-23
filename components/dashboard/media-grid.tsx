@@ -9,7 +9,7 @@ import { createClient } from "@/lib/client";
 type MediaItem = {
   id: string;
   title: string;
-  status: "pending" | "generating" | "completed" | "failed";
+  status: "pending" | "transcribing" | "generating" | "saving" | "completed" | "failed";
   created_at: string;
 };
 

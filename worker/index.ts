@@ -29,6 +29,14 @@ async function updateJobStatus(
     .eq("id", jobId);
 }
 
+async function updatePostStatus(postId: string, status: string) {
+  const supabaseAdmin = createAdminClient();
+  await supabaseAdmin
+    .from("media_posts")
+    .update({ status })
+    .eq("id", postId);
+}
+
 async function chainToAIGenerate(
   jobId: string,
   postId: string,
@@ -73,6 +81,7 @@ const transcriptionWorker = new Worker(
 
     console.log(`Starting transcribe job: ${jobId}`);
     await updateJobStatus(jobId, "running");
+    await updatePostStatus(postId, "transcribing");
 
     const result = await stepTranscribe(fileUrl);
 
@@ -100,8 +109,9 @@ const aiGenerateWorker = new Worker(
     const { jobId, postId, fileUrl, transcriptionText, rawTimeStamp } =
       job.data;
 
-    console.log(`Starting transcribe job: ${jobId}`);
+    console.log(`Starting AI generate job: ${jobId}`);
     await updateJobStatus(jobId, "running");
+    await updatePostStatus(postId, "generating");
 
     const result = await stepAiGenerate(transcriptionText, rawTimeStamp);
 
@@ -135,6 +145,7 @@ const saveWorker = new Worker(
 
     console.log(`Starting save job: ${jobId}`);
     await updateJobStatus(jobId, "running");
+    await updatePostStatus(postId, "saving");
 
     const result = await stepSave(postId, kitData);
 
@@ -144,6 +155,7 @@ const saveWorker = new Worker(
 
     console.log(`Save job done: ${jobId}`);
 
+    await updatePostStatus(postId, "completed");
     await updateJobStatus(jobId, "completed");
     console.log(`Job: ${jobId} done, all jobs completed`);
   },
