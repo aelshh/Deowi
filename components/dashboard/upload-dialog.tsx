@@ -14,7 +14,28 @@ import { Upload, FileAudio, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 
-export function UploadDialog() {
+type MediaItem = {
+  id: string;
+  title: string;
+  status:
+    | "pending"
+    | "transcribing"
+    | "generating"
+    | "saving"
+    | "completed"
+    | "failed";
+  created_at: string;
+};
+
+export function UploadDialog({
+  onUploadSuccess,
+  onUploadError,
+  onUploadResolved,
+}: {
+  onUploadSuccess?: (newItem: MediaItem) => void;
+  onUploadError?: (tempId: string) => void;
+  onUploadResolved?: (tempId: string, realId: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -22,6 +43,8 @@ export function UploadDialog() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const tempIdRef = useRef<string | null>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -32,26 +55,11 @@ export function UploadDialog() {
     }
   };
 
-  async function uploadFileToSignedUrl(
-    file: File,
-    signedUrl: string,
-    onProgress: (pct: number) => void,
-  ) {
-    try {
-      await axios.put(signedUrl, file, {
-        headers: { "Content-Type": file.type },
-        onUploadProgress: (e) => {
-          if (e.total) onProgress(Math.round(e.loaded * 100) / e.total);
-        },
-      });
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.data.error) {
-        setUploadError(err.response.data.error);
-      } else {
-        setUploadError(err instanceof Error ? err.message : "Upload failed");
-      }
-    }
-  }
+  const handleCancel = () => {
+    abortRef.current?.abort();
+    setFile(null);
+    setOpen(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +68,9 @@ export function UploadDialog() {
     setUploading(true);
     setUploadError(null);
     setProgress(0);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
       const urlRes = await axios.post(
@@ -71,6 +82,7 @@ export function UploadDialog() {
         },
         {
           headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
         },
       );
 
@@ -84,23 +96,47 @@ export function UploadDialog() {
         storagePath,
       }: { signedUrl: string; storagePath: string } = urlRes.data;
 
-      await uploadFileToSignedUrl(file, signedUrl, setProgress);
-
-      const completeRes = await axios.post(
-        "/api/upload-complete",
-        { storagePath },
-        {
-          headers: { "Content-Type": "application/json" },
+      await axios.put(signedUrl, file, {
+        headers: { "Content-Type": file.type },
+        signal: controller.signal,
+        onUploadProgress: (e) => {
+          if (e.total) setProgress(Math.round(e.loaded * 100) / e.total);
         },
-      );
+      });
 
-      if (completeRes.data.error) {
-        const err = completeRes.data.error;
-        throw new Error(err || "Failed to complete upload");
-      }
+      const tempId = crypto.randomUUID();
+      tempIdRef.current = tempId;
 
+      onUploadSuccess?.({
+        id: tempId,
+        title: file.name,
+        status: "pending",
+        created_at: new Date().toISOString(),
+      });
       setOpen(false);
+
+      axios
+        .post(
+          "/api/upload-complete",
+          { storagePath },
+          {
+            headers: { "Content-Type": "application/json" },
+          },
+        )
+        .then((res) => {
+          if (res.data.error) {
+            console.error("Upload complete failed:", res.data.error);
+            onUploadError?.(tempId);
+            return;
+          }
+          onUploadResolved?.(tempId, res.data.mediaId);
+        });
     } catch (err) {
+      if (axios.isCancel(err)) {
+        onUploadError?.(tempIdRef.current!);
+        tempIdRef.current = null;
+        return;
+      }
       if (axios.isAxiosError(err) && err.response?.data.error)
         setUploadError(err.response.data.error);
       else {
@@ -186,11 +222,7 @@ export function UploadDialog() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                setFile(null);
-                setOpen(false);
-              }}
-              disabled={uploading}
+              onClick={handleCancel}
             >
               Cancel
             </Button>

@@ -62,7 +62,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const result = await enqueueJob({ postId: dbData.id, fileUrl: publicUrl });
+  const result = await enqueueJob({
+    postId: dbData.id,
+    fileUrl: publicUrl,
+    userId: user.id,
+  });
   console.log("added job from transcribe from upload-compltet route : ");
 
   if (!result.success) {

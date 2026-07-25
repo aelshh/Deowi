@@ -8,9 +8,25 @@ import {
 } from "../lib/queue/queue";
 import { createAdminClient } from "../lib/server";
 import { Worker, Job } from "bullmq";
+import { getRedisPublisher } from "../lib/redis";
 
 function getConnection() {
   return createRedisConnection();
+}
+
+const redis = getRedisPublisher();
+
+const supabaseAdmin = createAdminClient();
+
+function publishStatus(userId: string, postId: string, status: string) {
+  redis.publish(
+    "media-updates",
+    JSON.stringify({
+      userId,
+      postId,
+      status,
+    }),
+  );
 }
 
 async function updateJobStatus(
@@ -18,7 +34,6 @@ async function updateJobStatus(
   status: string,
   extra: Record<string, unknown> = {},
 ) {
-  const supabaseAdmin = createAdminClient();
   await supabaseAdmin
     .from("processing_jobs")
     .update({
@@ -29,18 +44,20 @@ async function updateJobStatus(
     .eq("id", jobId);
 }
 
-async function updatePostStatus(postId: string, status: string) {
-  const supabaseAdmin = createAdminClient();
-  await supabaseAdmin
-    .from("media_posts")
-    .update({ status })
-    .eq("id", postId);
+async function updatePostStatus(
+  userId: string,
+  postId: string,
+  status: string,
+) {
+  await supabaseAdmin.from("media_posts").update({ status }).eq("id", postId);
+  redis.publish("media-updates", JSON.stringify({ userId, postId, status }));
 }
 
 async function chainToAIGenerate(
   jobId: string,
   postId: string,
   fileUrl: string,
+  userId: string,
   data: Record<string, unknown> = {},
 ) {
   await getAiQueue().add(
@@ -49,6 +66,7 @@ async function chainToAIGenerate(
       jobId,
       postId,
       fileUrl,
+      userId,
       ...data,
     },
     { jobId: `${jobId}-ai_generate` },
@@ -59,6 +77,7 @@ async function chainToSave(
   jobId: string,
   postId: string,
   fileUrl: string,
+  userId: string,
   data: Record<string, unknown> = {},
 ) {
   await getSaveQueue().add(
@@ -67,6 +86,7 @@ async function chainToSave(
       jobId,
       postId,
       fileUrl,
+      userId,
       ...data,
     },
     { jobId: `${jobId}-save` },
@@ -77,11 +97,11 @@ async function chainToSave(
 const transcriptionWorker = new Worker(
   "media-transcription",
   async (job) => {
-    const { jobId, postId, fileUrl } = job.data;
+    const { jobId, postId, fileUrl, userId } = job.data;
 
     console.log(`Starting transcribe job: ${jobId}`);
     await updateJobStatus(jobId, "running");
-    await updatePostStatus(postId, "transcribing");
+    await updatePostStatus(userId, postId, "transcribing");
 
     const result = await stepTranscribe(fileUrl);
 
@@ -89,7 +109,7 @@ const transcriptionWorker = new Worker(
       throw new Error(result.error);
     }
 
-    await chainToAIGenerate(jobId, postId, fileUrl, {
+    await chainToAIGenerate(jobId, postId, fileUrl, userId, {
       transcriptionText: result.transcriptionText,
       rawTimeStamp: result.rawTimeStamp,
     });
@@ -106,12 +126,12 @@ const transcriptionWorker = new Worker(
 const aiGenerateWorker = new Worker(
   "media-aiProcessing",
   async (job) => {
-    const { jobId, postId, fileUrl, transcriptionText, rawTimeStamp } =
+    const { jobId, postId, fileUrl, transcriptionText, rawTimeStamp, userId } =
       job.data;
 
     console.log(`Starting AI generate job: ${jobId}`);
     await updateJobStatus(jobId, "running");
-    await updatePostStatus(postId, "generating");
+    await updatePostStatus(userId, postId, "generating");
 
     const result = await stepAiGenerate(transcriptionText, rawTimeStamp);
 
@@ -119,7 +139,7 @@ const aiGenerateWorker = new Worker(
       throw new Error(result.error);
     }
 
-    await chainToSave(jobId, postId, fileUrl, {
+    await chainToSave(jobId, postId, fileUrl, userId, {
       kitData: {
         blogPost: result.blogPost,
         newsletter: result.newsletter,
@@ -141,11 +161,11 @@ const aiGenerateWorker = new Worker(
 const saveWorker = new Worker(
   "media-saving",
   async (job) => {
-    const { jobId, postId, kitData } = job.data;
+    const { jobId, postId, kitData, userId } = job.data;
 
     console.log(`Starting save job: ${jobId}`);
     await updateJobStatus(jobId, "running");
-    await updatePostStatus(postId, "saving");
+    await updatePostStatus(userId, postId, "saving");
 
     const result = await stepSave(postId, kitData);
 
@@ -155,7 +175,7 @@ const saveWorker = new Worker(
 
     console.log(`Save job done: ${jobId}`);
 
-    await updatePostStatus(postId, "completed");
+    await updatePostStatus(userId, postId, "completed");
     await updateJobStatus(jobId, "completed");
     console.log(`Job: ${jobId} done, all jobs completed`);
   },
@@ -168,15 +188,13 @@ const saveWorker = new Worker(
 
 async function handleJobFail(job: Job | undefined, error: Error) {
   if (!job) return;
-  const { jobId } = job.data;
+  const { jobId, postId, userId } = job.data;
 
   console.log(`Job: ${jobId} ${job.name} failed, error: ${error.message} `);
 
   const isFinalFailure = job.attemptsMade >= (job.opts.attempts ?? 3);
 
-  const supabase = createAdminClient();
-
-  await supabase
+  await supabaseAdmin
     .from("processing_jobs")
     .update({
       attempts: job.attemptsMade,
@@ -185,6 +203,10 @@ async function handleJobFail(job: Job | undefined, error: Error) {
       updated_at: new Date().toISOString(),
     })
     .eq("id", jobId);
+
+  if (isFinalFailure && postId && userId) {
+    updatePostStatus(userId, postId, "failed");
+  }
 }
 
 transcriptionWorker.on("failed", handleJobFail);

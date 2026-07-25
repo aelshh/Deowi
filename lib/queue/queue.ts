@@ -6,7 +6,7 @@ export function createRedisConnection() {
     host: url.hostname,
     port: Number(url.port),
     password: decodeURIComponent(url.password),
-    tls: {},
+    tls: url.protocol === "rediss:" ? {} : undefined,
     maxRetriesPerRequest: null,
     enableReadyCheck: false,
   };

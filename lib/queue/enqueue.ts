@@ -4,9 +4,10 @@ import { getTranscriptionQueue } from "./queue";
 type EnqueType = {
   postId: string;
   fileUrl: string;
+  userId: string;
 };
 
-export async function enqueueJob({ postId, fileUrl }: EnqueType) {
+export async function enqueueJob({ userId, postId, fileUrl }: EnqueType) {
   const supabaseAdmin = createAdminClient();
   console.log("created client");
 
@@ -31,7 +32,7 @@ export async function enqueueJob({ postId, fileUrl }: EnqueType) {
   try {
     await getTranscriptionQueue().add(
       "transcribe",
-      { jobId: job.id, postId, fileUrl },
+      { jobId: job.id, postId, fileUrl, userId },
       { jobId: job.id },
     );
 

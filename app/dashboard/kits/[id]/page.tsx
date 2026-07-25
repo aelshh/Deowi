@@ -9,7 +9,9 @@ import {
   ListTree,
   ClipboardCopy,
   Subtitles,
+  ArrowLeft,
 } from "lucide-react";
+import Link from "next/link";
 import SubtitleDownloadButton from "@/components/ui/download-btn";
 
 type KitPageProps = {
@@ -84,6 +86,13 @@ export default async function KitDetailPage({ params }: KitPageProps) {
     <>
       <Header title={media.title} userEmail={email} userName={userName} />
       <div className="flex-1 space-y-6 overflow-y-auto p-6">
+        <Link
+          href="/dashboard/kits"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Back to kits
+        </Link>
         <div className="flex items-center gap-3">
           <StatusBadge status={media.status} />
           <span className="text-xs text-muted-foreground">

@@ -3,7 +3,7 @@ import { getUserMedia, verifySession } from "@/lib/dal";
 import { Header } from "@/components/dashboard/header";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import Link from "next/link";
-import { ScrollText } from "lucide-react";
+import { ScrollText, ArrowLeft } from "lucide-react";
 
 async function KitsList() {
   const media = await getUserMedia();
@@ -61,6 +61,13 @@ export default async function KitsPage() {
     <>
       <Header title="Marketing Kits" userEmail={email} userName={userName} />
       <div className="flex-1 space-y-6 p-6">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Back
+        </Link>
         <Suspense
           fallback={
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

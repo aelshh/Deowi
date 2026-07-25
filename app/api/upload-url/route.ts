@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     .from("media_posts")
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id)
-    .in("status", ["pending", "generating"]);
+    .in("status", ["pending", "generating", "transcribing", "saving"]);
 
   if (activeCount && activeCount > 3) {
     return NextResponse.json(

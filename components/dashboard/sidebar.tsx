@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import {
   Film,
   ScrollText,
-  Settings,
   PanelLeftClose,
   PanelLeft,
 } from "lucide-react";
@@ -16,7 +15,6 @@ import { useState } from "react";
 const navItems = [
   { href: "/dashboard", label: "Media", icon: Film },
   { href: "/dashboard/kits", label: "Marketing Kits", icon: ScrollText },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar() {

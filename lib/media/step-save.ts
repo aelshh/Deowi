@@ -45,17 +45,6 @@ export async function stepSave(
     return { success: false, error: insertKitError.message };
   }
 
-  const { error: updateError } = await supabaseAdmin
-    .from("media_posts")
-    .update({
-      status: "completed",
-    })
-    .eq("id", mediaId);
-
-  if (updateError) {
-    return { success: false, error: updateError.message };
-  }
-
   console.log(`step:save, marketing kit saved for ${mediaId}`);
   return { success: true };
 }
