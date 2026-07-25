@@ -10,7 +10,7 @@ import {
   signInWithGoogle,
   signInWithGithub,
 } from "@/actions/auth-actions";
-import { Eye, EyeOff, Loader2, Check, X } from "lucide-react";
+import { Eye, EyeOff, Loader2, Check, X, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 function PasswordStrength({ password }: { password: string }) {
@@ -64,6 +64,13 @@ export function SignupForm() {
 
   return (
     <div className="w-full max-w-sm">
+      <Link
+        href="/"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Back
+      </Link>
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight">
           Create your account

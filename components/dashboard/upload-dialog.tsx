@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -46,6 +46,28 @@ export function UploadDialog({
   const abortRef = useRef<AbortController | null>(null);
   const tempIdRef = useRef<string | null>(null);
 
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (uploading) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [uploading]);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && uploading) {
+      abortRef.current?.abort();
+    }
+    if (!nextOpen) {
+      setFile(null);
+      setUploadError(null);
+      setProgress(0);
+    }
+    setOpen(nextOpen);
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
@@ -56,9 +78,7 @@ export function UploadDialog({
   };
 
   const handleCancel = () => {
-    abortRef.current?.abort();
-    setFile(null);
-    setOpen(false);
+    handleOpenChange(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -133,7 +153,9 @@ export function UploadDialog({
         });
     } catch (err) {
       if (axios.isCancel(err)) {
-        onUploadError?.(tempIdRef.current!);
+        if (tempIdRef.current) {
+          onUploadError?.(tempIdRef.current);
+        }
         tempIdRef.current = null;
         return;
       }
@@ -148,7 +170,7 @@ export function UploadDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button className="gap-1.5" />}>
         <Upload className="size-4" />
         Upload media
@@ -172,7 +194,7 @@ export function UploadDialog({
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 text-center transition-all duration-200",
+              "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-6 text-center transition-all duration-200 sm:p-10",
               dragOver
                 ? "border-accent bg-accent/5"
                 : "border-border hover:border-border",

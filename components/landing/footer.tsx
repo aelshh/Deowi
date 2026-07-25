@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 const productLinks = [
   { href: "#features", label: "Features" },
@@ -25,12 +26,10 @@ export function Footer() {
   return (
     <footer className="border-t border-border/50 py-16">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-10 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-4">
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary text-xs font-bold text-white">
-                D
-              </div>
+              <Logo size={28} />
               <span className="text-sm font-semibold tracking-tight">Deowi</span>
             </Link>
             <p className="text-xs leading-relaxed text-muted-foreground">

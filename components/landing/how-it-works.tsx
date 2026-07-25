@@ -37,7 +37,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 md:py-32">
+    <section id="how-it-works" className="py-14 sm:py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -71,7 +71,7 @@ export function HowItWorks() {
                 className="group relative overflow-hidden rounded-2xl border border-border/50 bg-surface/50 backdrop-blur-sm transition-colors duration-200 hover:border-accent/20 hover:bg-surface"
               >
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-40 overflow-hidden md:h-48">
                   <Image
                     src={item.image}
                     alt={item.alt}
@@ -80,13 +80,13 @@ export function HowItWorks() {
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent" />
-                  <span className="absolute top-4 left-4 text-5xl font-bold text-gradient">
+                  <span className="absolute top-4 left-4 text-4xl font-bold text-gradient md:text-5xl">
                     {item.step}
                   </span>
                 </div>
 
                 {/* Content */}
-                <div className="p-8">
+                <div className="p-6 md:p-8">
                   <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent/20">
                     <Icon className="size-6" />
                   </div>

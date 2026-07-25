@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { SocialButton } from "@/components/auth/social-button";
 import { signInWithEmail, signInWithGoogle, signInWithGithub } from "@/actions/auth-actions";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export function LoginForm() {
@@ -15,6 +15,13 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-sm">
+      <Link
+        href="/"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Back
+      </Link>
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight">
           Welcome back

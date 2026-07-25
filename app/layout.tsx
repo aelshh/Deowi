@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Deowi — Turn recordings into marketing kits",
   description:
     "Upload any recording — podcast, meeting, lecture — and get a blog post, newsletter, social hooks, and chapters in seconds.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -16,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col overflow-x-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

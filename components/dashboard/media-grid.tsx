@@ -20,7 +20,7 @@ type MediaItem = {
 export function MediaGrid({ items }: { items: MediaItem[] }) {
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-surface/50 px-6 py-16 text-center">
+      <div className="flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-border/50 bg-surface/50 px-6 py-16 text-center">
         <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
           <FileAudio className="size-6" />
         </div>
@@ -40,10 +40,10 @@ export function MediaGrid({ items }: { items: MediaItem[] }) {
           href={
             item.status === "completed" ? `/dashboard/kits/${item.id}` : "#"
           }
-          className="group relative rounded-2xl border border-border/50 bg-surface/50 p-5 transition-all duration-200 hover:border-border hover:bg-surface"
+          className="group relative overflow-hidden rounded-2xl border border-border/50 bg-surface/50 p-5 transition-all duration-200 hover:border-border hover:bg-surface"
         >
           <div className="mb-3 flex items-center gap-2">
-            <div className="flex size-8 items-center justify-lg rounded-xl bg-accent/10 text-accent">
+            <div className="flex size-8 items-center justify-center rounded-xl bg-accent/10 text-accent">
               <FileAudio className="size-4" />
             </div>
             <StatusBadge status={item.status} />

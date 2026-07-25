@@ -7,43 +7,34 @@ import {
   Hash,
   Mail,
   ListTree,
-  ClipboardCopy,
   Subtitles,
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
 import SubtitleDownloadButton from "@/components/ui/download-btn";
+import { CopyButton } from "@/components/ui/copy-button";
+import { MarkdownContent } from "@/components/ui/markdown-content";
+import { newsletterToHtml, stripSubjectLine, extractSubject } from "@/lib/newsletter-html";
 
 type KitPageProps = {
   params: Promise<{ id: string }>;
 };
 
-function CopyButton() {
-  return (
-    <form
-      action={async () => {
-        "use server";
-      }}
-    >
-      <button className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-all duration-200 hover:border-accent/30 hover:bg-accent/10 hover:text-accent">
-        <ClipboardCopy className="size-3.5" />
-        Copy
-      </button>
-    </form>
-  );
-}
-
 function SectionBlock({
   title,
   icon: Icon,
+  copyText,
+  copyMarkdown,
   children,
 }: {
   title: string;
   icon: typeof FileText;
+  copyText: string;
+  copyMarkdown?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-border/50 bg-surface/50 p-6">
+    <div className="overflow-hidden rounded-2xl border border-border/50 bg-surface/50 p-4 sm:p-6">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex size-8 items-center justify-center rounded-xl bg-accent/10 text-accent">
@@ -53,9 +44,9 @@ function SectionBlock({
             {title}
           </h2>
         </div>
-        <CopyButton />
+        <CopyButton text={copyText} markdown={copyMarkdown} />
       </div>
-      <div className="max-w-none text-sm leading-relaxed text-foreground/80">
+      <div className="min-w-0 text-sm leading-relaxed text-foreground/80">
         {children}
       </div>
     </div>
@@ -82,10 +73,16 @@ export default async function KitDetailPage({ params }: KitPageProps) {
     | { x_hooks?: string[]; linkedin_hooks?: string[] }
     | undefined;
 
+  const blogMd = `${kit.blog_post.title}\n\n${kit.blog_post.content}`;
+  const newsletterMd = kit.newsletter as string;
+  const newsletterSubject = extractSubject(newsletterMd);
+  const newsletterBody = stripSubjectLine(newsletterMd);
+  const newsletterHtml = newsletterToHtml(newsletterMd);
+
   return (
     <>
       <Header title={media.title} userEmail={email} userName={userName} />
-      <div className="flex-1 space-y-6 overflow-y-auto p-6">
+      <div className="flex-1 space-y-6 overflow-y-auto p-4 md:p-6">
         <Link
           href="/dashboard/kits"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
@@ -105,20 +102,22 @@ export default async function KitDetailPage({ params }: KitPageProps) {
         </div>
 
         <div className="space-y-6">
-          <SectionBlock title="Blog Post" icon={FileText}>
-            <h2 className="text-xl font-semibold mb-4">{kit.blog_post.title}</h2>
-            <div className="whitespace-pre-wrap">{kit.blog_post.content}</div>
+          <SectionBlock title="Blog Post" icon={FileText} copyText={blogMd} copyMarkdown={blogMd}>
+            <h2 className="text-lg font-semibold mb-4 break-words md:text-xl">{kit.blog_post.title}</h2>
+            <div className="max-h-96 overflow-y-auto scrollbar-themed">
+              <MarkdownContent content={kit.blog_post.content} />
+            </div>
           </SectionBlock>
 
-          <SectionBlock title="Newsletter" icon={Mail}>
-            <div className="whitespace-pre-wrap">{kit.newsletter}</div>
+          <SectionBlock title="Newsletter" icon={Mail} copyText={newsletterMd} copyMarkdown={newsletterMd}>
+            <MarkdownContent content={newsletterMd} />
           </SectionBlock>
 
           {socialHooks?.x_hooks && socialHooks.x_hooks.length > 0 && (
-            <SectionBlock title="X / Twitter Hooks" icon={Hash}>
+            <SectionBlock title="X / Twitter Hooks" icon={Hash} copyText={socialHooks.x_hooks.join("\n\n")}>
               <ul className="space-y-3">
                 {socialHooks.x_hooks.map((hook: string, i: number) => (
-                  <li key={i} className="border-l-2 border-accent/30 pl-3">
+                  <li key={i} className="border-l-2 border-accent/30 pl-3 text-sm leading-relaxed break-words">
                     {hook}
                   </li>
                 ))}
@@ -128,10 +127,10 @@ export default async function KitDetailPage({ params }: KitPageProps) {
 
           {socialHooks?.linkedin_hooks &&
             socialHooks.linkedin_hooks.length > 0 && (
-              <SectionBlock title="LinkedIn Hooks" icon={Hash}>
+              <SectionBlock title="LinkedIn Hooks" icon={Hash} copyText={socialHooks.linkedin_hooks.join("\n\n")}>
                 <ul className="space-y-3">
                   {socialHooks.linkedin_hooks.map((hook: string, i: number) => (
-                    <li key={i} className="border-l-2 border-accent/30 pl-3">
+                    <li key={i} className="border-l-2 border-accent/30 pl-3 text-sm leading-relaxed break-words">
                       {hook}
                     </li>
                   ))}
@@ -140,7 +139,7 @@ export default async function KitDetailPage({ params }: KitPageProps) {
             )}
 
           {chapters && chapters.length > 0 && (
-            <SectionBlock title="Chapters" icon={ListTree}>
+            <SectionBlock title="Chapters" icon={ListTree} copyText={chapters.map((ch) => `${ch.timestamp} - ${ch.title}`).join("\n")}>
               <ol className="space-y-2">
                 {chapters.map(
                   (ch: { title: string; timestamp: string }, i: number) => (
@@ -148,7 +147,7 @@ export default async function KitDetailPage({ params }: KitPageProps) {
                       <span className="mt-0.5 shrink-0 rounded-md bg-surface px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
                         {ch.timestamp}
                       </span>
-                      <span>{ch.title}</span>
+                      <span className="break-words leading-relaxed">{ch.title}</span>
                     </li>
                   ),
                 )}
@@ -157,19 +156,11 @@ export default async function KitDetailPage({ params }: KitPageProps) {
           )}
 
           {typeof kit.subtitles === "string" && kit.subtitles.length > 0 && (
-            <SectionBlock title={"Subtitles"} icon={Subtitles}>
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">
-                  Download this file and import into your video editor
-                </p>
-                <SubtitleDownloadButton
-                  srtContent={kit.subtitles}
-                  title={media.title}
-                />
-              </div>
-              <pre className="max-h-64 max-w-3xl overflow-y-auto rounded-xl border border-border bg-surface p-3 font-mono text-xs text-foreground/70">
-                {kit.subtitles}
-              </pre>
+            <SectionBlock title={"Subtitles"} icon={Subtitles} copyText={kit.subtitles}>
+              <SubtitleDownloadButton
+                srtContent={kit.subtitles}
+                title={media.title}
+              />
             </SectionBlock>
           )}
         </div>

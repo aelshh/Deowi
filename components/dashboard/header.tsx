@@ -8,8 +8,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LogOut } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useSidebar } from "./sidebar-context";
 
 type HeaderProps = {
   title: string;
@@ -19,10 +20,19 @@ type HeaderProps = {
 
 export function Header({ title, userEmail, userName }: HeaderProps) {
   const initial = (userName || userEmail || "U").charAt(0).toUpperCase();
+  const { openMobile } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border/50 bg-background px-6">
-      <h1 className="text-base font-semibold tracking-tight">{title}</h1>
+    <header className="sticky top-0 z-10 flex h-14 min-w-0 items-center justify-between border-b border-border/50 bg-background px-4 md:px-6">
+      <div className="flex min-w-0 items-center gap-2">
+        <button
+          onClick={openMobile}
+          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-surface-hover hover:text-foreground md:hidden"
+        >
+          <Menu className="size-4" />
+        </button>
+        <h1 className="min-w-0 truncate text-sm font-semibold tracking-tight md:text-base">{title}</h1>
+      </div>
       <div className="flex items-center gap-1">
         <ThemeToggle />
         <DropdownMenu>

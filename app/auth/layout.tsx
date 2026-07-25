@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Logo } from "@/components/ui/logo";
 
 const testimonials = [
   {
@@ -115,9 +116,7 @@ export default function AuthLayout({
       <div className="hidden w-1/2 flex-col justify-between bg-gradient-to-br from-surface to-background p-12 lg:flex">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary text-sm font-bold text-white">
-              D
-            </div>
+            <Logo size={32} />
             <span className="text-sm font-semibold tracking-tight">Deowi</span>
           </div>
           <ThemeToggle />
@@ -129,7 +128,7 @@ export default function AuthLayout({
           &copy; {new Date().getFullYear()} Deowi. All rights reserved.
         </p>
       </div>
-      <div className="flex flex-1 items-center justify-center px-6 py-12">
+      <div className="flex flex-1 items-center justify-center px-6 py-8 md:py-12">
         {children}
       </div>
     </div>

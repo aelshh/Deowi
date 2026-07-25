@@ -68,7 +68,7 @@ export function Pricing() {
   const plans = yearly ? yearlyPlans : monthlyPlans;
 
   return (
-    <section id="pricing" className="py-24 md:py-32">
+    <section id="pricing" className="py-14 sm:py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -124,7 +124,7 @@ export function Pricing() {
                 hidden: { opacity: 0, y: 12 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: i * 0.05 } },
               }}
-              className={`relative rounded-2xl p-8 flex flex-col transition-colors duration-200 ${
+              className={`relative rounded-2xl p-6 flex flex-col transition-colors duration-200 md:p-8 ${
                 plan.popular
                   ? "border-2 border-accent/50 bg-surface shadow-glow"
                   : "border border-border/50 bg-surface/50 hover:border-border"

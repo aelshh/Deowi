@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -22,15 +22,13 @@ export function ThemeToggle({ className }: { className?: string }) {
         )}
         disabled
       >
-        <Monitor className="size-4" />
+        <Sun className="size-4" />
       </button>
     );
   }
 
   const cycle = () => {
-    if (theme === "light") setTheme("dark");
-    else if (theme === "dark") setTheme("system");
-    else setTheme("light");
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
@@ -40,11 +38,10 @@ export function ThemeToggle({ className }: { className?: string }) {
         "flex size-9 items-center justify-center rounded-xl text-muted-foreground transition-colors duration-200 hover:bg-surface-hover hover:text-foreground",
         className,
       )}
-      title={`Current theme: ${theme}. Click to cycle.`}
+      title={`Current theme: ${theme}. Click to toggle.`}
     >
       {theme === "light" && <Sun className="size-4" />}
       {theme === "dark" && <Moon className="size-4" />}
-      {theme === "system" && <Monitor className="size-4" />}
     </button>
   );
 }

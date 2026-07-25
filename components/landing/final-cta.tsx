@@ -40,7 +40,7 @@ export function FinalCta() {
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
       </div>
 
-      <div className="relative mx-auto max-w-4xl px-6 py-24 text-center md:py-32">
+      <div className="relative mx-auto max-w-4xl px-6 py-14 text-center sm:py-24 md:py-32">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -76,7 +76,7 @@ export function FinalCta() {
           <motion.div variants={childVariants} className="mt-10">
             <Link
               href="/auth/signup"
-              className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-8 text-sm font-medium text-white shadow-lg transition-all duration-200 hover:shadow-glow-lg hover:brightness-110"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-6 text-sm font-medium text-white shadow-lg transition-all duration-200 hover:shadow-glow-lg hover:brightness-110 md:px-8"
               data-testid="cta-button"
             >
               Get started free

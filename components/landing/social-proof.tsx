@@ -28,7 +28,7 @@ export function SocialProof() {
   const logoInView = useInView(logoRef, { once: true, margin: "-60px" });
 
   return (
-    <section className="border-t border-border/50 py-20 md:py-24">
+    <section className="border-t border-border/50 py-14 sm:py-20 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
           ref={headerRef}
@@ -42,7 +42,7 @@ export function SocialProof() {
               key={stat.label}
               className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/50 bg-surface/50 p-8 backdrop-blur-sm"
             >
-              <span className="text-5xl font-bold tracking-tight text-gradient md:text-6xl">
+              <span className="text-4xl font-bold tracking-tight text-gradient sm:text-5xl md:text-6xl">
                 {stat.value}
               </span>
               <span className="text-sm text-muted-foreground">
@@ -62,7 +62,7 @@ export function SocialProof() {
           <p className="mb-8 text-center text-sm text-muted-foreground">
             Trusted by teams building in public
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-5">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-4 sm:gap-x-12 sm:gap-y-5">
             {companies.map((name) => (
               <span
                 key={name}

@@ -46,7 +46,7 @@ function ProductMockup() {
                 <div className="size-0 border-l-[10px] border-l-accent border-y-[6px] border-y-transparent ml-0.5" />
               </div>
               <div className="flex-1">
-                <div className="flex items-end gap-[2px] h-8">
+                <div             className="flex items-end gap-[2px] h-8 overflow-hidden">
                   {Array.from({ length: 48 }).map((_, i) => {
                     const height = Math.sin(i * 0.3) * 0.5 + 0.5;
                     const isPlayed = i < 32;
@@ -146,7 +146,7 @@ export function Hero() {
 
           <motion.p
             variants={heroItem}
-            className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
+            className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg"
           >
             Upload a podcast, meeting, or lecture. Get a blog post, newsletter, social hooks, and chapters — all in seconds.
           </motion.p>
@@ -155,19 +155,19 @@ export function Hero() {
             variants={heroItem}
             className="mx-auto mt-10 max-w-lg"
           >
-            <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface p-2 shadow-lg backdrop-blur-sm">
+            <div className="flex items-center gap-2 overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-lg backdrop-blur-sm">
               <input
                 type="text"
                 placeholder="Paste your recording URL..."
-                className="flex-1 bg-transparent px-4 py-3 text-base placeholder:text-muted-foreground focus:outline-none"
+                className="min-w-0 flex-1 bg-transparent px-3 py-3 text-base placeholder:text-muted-foreground focus:outline-none sm:px-4"
                 data-testid="hero-input"
               />
               <Link
                 href="/auth/signup"
-                className="flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-6 py-3 text-sm font-medium text-white shadow-md transition-all duration-200 hover:shadow-glow hover:brightness-110"
+                className="flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-3 py-3 text-sm font-medium text-white shadow-md transition-all duration-200 hover:shadow-glow hover:brightness-110 sm:px-6"
                 data-testid="cta-button"
               >
-                Generate
+                <span className="hidden sm:inline">Generate</span>
                 <ArrowRight className="size-4" />
               </Link>
             </div>
@@ -175,7 +175,7 @@ export function Hero() {
 
           <motion.div
             variants={heroItem}
-            className="mx-auto mt-10 flex max-w-sm gap-3"
+            className="mx-auto mt-10 flex max-w-sm flex-col gap-3 sm:flex-row"
           >
             <Link
               href="/auth/signup"
@@ -195,7 +195,7 @@ export function Hero() {
 
           <motion.div
             variants={heroItem}
-            className="mt-10 flex items-center justify-center gap-6 text-sm text-muted-foreground"
+            className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground"
           >
             <span className="flex items-center gap-1.5">
               <span className="text-foreground font-medium">10x faster</span>

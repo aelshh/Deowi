@@ -51,7 +51,7 @@ const capabilities: Capability[] = [
 
 export function CapabilityGrid() {
   return (
-    <section id="features" className="py-24 md:py-32">
+    <section id="features" className="py-14 sm:py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

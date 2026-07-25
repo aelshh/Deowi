@@ -4,7 +4,7 @@ export default function DashboardLoading() {
   return (
     <>
       <Header title="Media" />
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 md:p-6">
         <div className="flex items-center justify-between">
           <div className="h-4 w-64 animate-pulse rounded-lg bg-muted/30" />
           <div className="h-9 w-32 animate-pulse rounded-xl bg-muted/30" />

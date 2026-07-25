@@ -31,7 +31,7 @@ async function KitsList() {
         <Link
           key={item.id}
           href={`/dashboard/kits/${item.id}`}
-          className="group relative rounded-2xl border border-border/50 bg-surface/50 p-5 transition-all duration-200 hover:border-border hover:bg-surface"
+          className="group relative overflow-hidden rounded-2xl border border-border/50 bg-surface/50 p-5 transition-all duration-200 hover:border-border hover:bg-surface"
         >
           <div className="mb-3 flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-xl bg-accent/10 text-accent">
@@ -60,7 +60,7 @@ export default async function KitsPage() {
   return (
     <>
       <Header title="Marketing Kits" userEmail={email} userName={userName} />
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-4 md:p-6">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"

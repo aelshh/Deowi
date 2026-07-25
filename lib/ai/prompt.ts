@@ -107,8 +107,8 @@ export const marketingKitSchema = z.object({
     .string()
     .describe(
       "A punchy, value-first email newsletter under 300 words. " +
-        "Start with a hook, list 3-5 key takeaways as bullet points, " +
-        "end with a single call-to-action. Use short paragraphs and white space.",
+        "Start with a Subject heading (## Subject: ...), then a hook, 3-5 bullet-point key takeaways, " +
+        "and a call-to-action. Every section must be separated by a blank line. Pure markdown only.",
     ),
   xHooks: z
     .array(z.string())
@@ -160,7 +160,7 @@ export type RawTimestamp = Array<{
 
 function formatSecondsToTimestamp(seconds: number): string {
   const h = Math.floor(seconds / 3600);
-  const m = Math.floor(seconds % 3600);
+  const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
 
   if (h > 0)
@@ -217,11 +217,26 @@ Each must be polished, professional, and ready to use as-is.
 
 NEWSLETTER RULES:
 - Under 300 words total.
-- Opening line must be a hook that makes the reader want to continue.
-- List 3-5 key takeaways as bullet points. Each bullet should be 1-2 sentences.
-- End with a single call-to-action (read the full post, watch the episode, etc.).
-- Use short paragraphs and white space. This should be scannable in 30 seconds.
-- Subject line should be included at the top, formatted as: Subject: [your subject line]
+- CRITICAL: Every section must be separated by a BLANK LINE. Never run bullets into a paragraph or another heading.
+- Format the subject line as: ## Subject: [your subject line]
+- After the subject line, add a BLANK LINE, then a hook paragraph (1-2 sentences that make the reader want to continue).
+- After the hook, add a BLANK LINE, then a short transition sentence.
+- After the transition, add a BLANK LINE, then list 3-5 key takeaways as bullet points. Each bullet should be 1-2 sentences.
+- After the bullets, add a BLANK LINE, then end with a single call-to-action paragraph.
+- This must be pure markdown. Do NOT use HTML tags.
+- Example structure:
+
+## Subject: Why Most Startups Fail
+
+Most founders spend months building before talking to a single customer.
+
+Here are the key lessons from this conversation:
+
+- **Talk to users first.** Before writing code, validate your idea with 10 real conversations.
+- **Ship ugly, iterate fast.** A rough MVP that gets feedback beats a polished product nobody wants.
+- **Pricing is a feature.** Don't give it away — charge early to test real demand.
+
+Listen to the full episode for the complete framework.
 
 TWITTER / X HOOK RULES:
 - Generate exactly 5 hooks.
@@ -247,9 +262,10 @@ CHAPTER RULES:
 - Generate between 5 and 10 chapters. NOT more, NOT fewer.
 - Each chapter represents a MAJOR TOPIC SHIFT in the recording.
   Do NOT create a chapter every few minutes. Group related discussion into one chapter.
-- Use the provided timestamps to place chapters at the EXACT moment a new topic begins.
-- Timestamps MUST be in HH:MM:SS format (e.g., "02:33:33"), NOT total minutes (e.g., "153:33").
-  If the timestamp is under 1 hour, use MM:SS (e.g., "45:12").
+- You are provided timestamped utterances in the format [MM:SS - MM:SS] or [HH:MM:SS - HH:MM:SS].
+- When choosing chapter timestamps, pick one that ACTUALLY APPEARS in the provided utterance timestamps. Do NOT invent timestamps.
+- If the video is under 1 hour, ALL timestamps must be MM:SS format (e.g., "05:30"). Do NOT use HH:MM:SS.
+- If the video is 1 hour or longer, use HH:MM:SS format (e.g., "02:33:33").
 - Titles should be short (under 10 words) and descriptive.
 - Chapters should flow logically — reading just the chapter titles should give
   someone a clear summary of the entire recording.

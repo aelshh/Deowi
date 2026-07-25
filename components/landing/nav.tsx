@@ -6,6 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Logo } from "@/components/ui/logo";
 
 const navLinks = [
   { href: "#features", label: "Features" },
@@ -42,9 +43,7 @@ export function Nav() {
       >
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5" data-testid="nav-logo">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-accent-secondary text-sm font-bold text-white">
-              D
-            </div>
+            <Logo size={32} />
             <span className="text-sm font-semibold tracking-tight">Deowi</span>
           </Link>
 

@@ -80,6 +80,9 @@
   code, kbd, samp, pre {
     @apply font-mono;
   }
+  a, button, [role="button"], input[type="submit"], input[type="button"], select, label[for], summary {
+    @apply cursor-pointer;
+  }
 }
 
 @layer utilities {
@@ -92,4 +95,64 @@
   .shadow-glow-lg {
     box-shadow: 0 0 60px -8px rgba(124, 58, 237, 0.3);
   }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Themed scrollbar — outside @layer to avoid Tailwind reset overrides */
+.scrollbar-themed {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-surface);
+}
+.scrollbar-themed::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-themed::-webkit-scrollbar-track {
+  background: var(--color-surface);
+  border-radius: 3px;
+}
+.scrollbar-themed::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 3px;
+}
+.scrollbar-themed::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-secondary);
+}
+
+/* Markdown kit content styles */
+.kit-prose h1 { @apply mt-6 mb-3 text-xl font-bold tracking-tight break-words; }
+.kit-prose h2 { @apply mt-5 mb-2 text-lg font-semibold tracking-tight break-words; }
+.kit-prose h3 { @apply mt-4 mb-2 text-base font-semibold break-words; }
+.kit-prose h4 { @apply mt-3 mb-1 text-sm font-semibold break-words; }
+.kit-prose p { @apply mb-3 leading-7 break-words; }
+.kit-prose ul { @apply mb-3 list-disc pl-5 space-y-1.5; }
+.kit-prose ol { @apply mb-3 list-decimal pl-5 space-y-1.5; }
+.kit-prose li { @apply leading-7 break-words; }
+.kit-prose li > p { @apply mb-0; }
+.kit-prose blockquote { @apply my-3 border-l-2 border-accent/30 pl-4 italic text-muted-foreground; }
+.kit-prose code { @apply rounded bg-muted px-1.5 py-0.5 text-xs font-mono break-all; }
+.kit-prose pre { @apply my-3 overflow-x-auto rounded-xl bg-muted p-4; }
+.kit-prose pre code { @apply bg-transparent p-0 break-normal; }
+.kit-prose a { @apply text-accent underline underline-offset-2 hover:no-underline; }
+.kit-prose strong { @apply font-semibold text-foreground; }
+.kit-prose em { @apply italic; }
+.kit-prose hr { @apply my-6 border-border; }
+.kit-prose table { @apply my-3 w-full text-sm; }
+.kit-prose th { @apply border border-border bg-muted px-3 py-2 text-left font-semibold; }
+.kit-prose td { @apply border border-border px-3 py-2; }
+.kit-prose > *:first-child { @apply mt-0; }
+.kit-prose > *:last-child { @apply mb-0; }
+
+@media (max-width: 640px) {
+  .kit-prose p { @apply text-sm leading-6; }
+  .kit-prose li { @apply text-sm leading-6; }
+  .kit-prose h1 { @apply text-lg; }
+  .kit-prose h2 { @apply text-base; }
+  .kit-prose blockquote { @apply text-xs; }
+  .kit-prose pre { @apply text-xs p-3; }
 }
