@@ -60,7 +60,7 @@ export default async function KitsPage() {
   return (
     <>
       <Header title="Marketing Kits" userEmail={email} userName={userName} />
-      <div className="flex-1 space-y-6 p-4 md:p-6">
+      <div className="flex-1 space-y-6 overflow-y-auto p-4 md:p-6">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"

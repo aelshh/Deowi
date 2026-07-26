@@ -92,7 +92,7 @@ function DashboardContent({
   return (
     <>
       <Header title="Media" userEmail={userEmail} userName={userName} />
-      <div className="flex-1 space-y-6 p-4 md:p-6">
+      <div className="flex-1 space-y-6 overflow-y-auto p-4 md:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
             Upload a recording to generate a marketing kit.
