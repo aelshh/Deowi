@@ -1,16 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowRight, FileText, Mail, Hash, ListTree } from "lucide-react";
 import Link from "next/link";
-import { heroContainer, heroItem } from "@/lib/motion";
+
+const WAVEFORM_HEIGHTS = Array.from({ length: 48 }, (_, i) =>
+  Math.round(Math.max((Math.sin(i * 0.3) * 0.5 + 0.5) * 100, 20)),
+);
 
 function ProductMockup() {
   return (
-    <motion.div
-      variants={heroItem}
-      className="mx-auto mt-16 max-w-4xl"
-    >
+    <div className="mx-auto mt-16 max-w-4xl animate-[fadeInUp_0.8s_ease-out_0.4s_both]">
       <div className="relative rounded-2xl border border-border/50 bg-surface/80 shadow-2xl backdrop-blur-sm overflow-hidden">
         {/* Browser chrome */}
         <div className="flex items-center gap-2 border-b border-border/50 bg-surface/50 px-4 py-3">
@@ -29,8 +28,12 @@ function ProductMockup() {
           {/* Header row */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Marketing Kit</h3>
-              <p className="text-sm text-muted-foreground">Episode 42: The Future of AI in Content</p>
+              <h3 className="text-lg font-semibold text-foreground">
+                Marketing Kit
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Episode 42: The Future of AI in Content
+              </p>
             </div>
             <div className="hidden items-center gap-2 md:flex">
               <span className="rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-600 dark:text-green-400">
@@ -46,21 +49,22 @@ function ProductMockup() {
                 <div className="size-0 border-l-[10px] border-l-accent border-y-[6px] border-y-transparent ml-0.5" />
               </div>
               <div className="flex-1">
-                <div             className="flex items-end gap-[2px] h-8 overflow-hidden">
-                  {Array.from({ length: 48 }).map((_, i) => {
-                    const height = Math.sin(i * 0.3) * 0.5 + 0.5;
+                <div className="flex items-end gap-[2px] h-8 overflow-hidden">
+                  {WAVEFORM_HEIGHTS.map((height, i) => {
                     const isPlayed = i < 32;
                     return (
                       <div
                         key={i}
                         className={`w-1 rounded-full transition-colors ${isPlayed ? "bg-accent" : "bg-border"}`}
-                        style={{ height: `${Math.max(height * 100, 20)}%` }}
+                        style={{ height: `${height}%` }}
                       />
                     );
                   })}
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground font-mono">14:32</span>
+              <span className="text-xs text-muted-foreground font-mono">
+                14:32
+              </span>
             </div>
           </div>
 
@@ -108,53 +112,36 @@ function ProductMockup() {
 
       {/* Glow effect */}
       <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 h-64 w-[500px] rounded-full bg-accent/15 blur-[100px]" />
-    </motion.div>
+    </div>
   );
 }
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-x-clip">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-accent/10 blur-[128px]" />
         <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-accent-secondary/10 blur-[128px]" />
       </div>
       <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-32 md:pb-24 md:pt-40">
-        <motion.div
-          className="mx-auto max-w-4xl text-center"
-          variants={heroContainer}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.p
-            variants={heroItem}
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-surface/50 px-4 py-1.5 text-xs text-muted-foreground backdrop-blur-sm"
-          >
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-surface/50 px-4 py-1.5 text-xs text-muted-foreground backdrop-blur-sm animate-[fadeInUp_0.6s_ease-out_0.1s_both]">
             <span className="size-1.5 rounded-full bg-green-500" />
             Powered by Gemini &amp; Deepgram
-          </motion.p>
+          </p>
 
-          <motion.h1
-            variants={heroItem}
-            className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
-          >
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-[fadeInUp_0.6s_ease-out_0.2s_both]">
             Turn Any Recording
             <br />
-            Into A{" "}
-            <span className="text-gradient">Marketing Kit</span>
-          </motion.h1>
+            Into A <span className="text-gradient">Marketing Kit</span>
+          </h1>
 
-          <motion.p
-            variants={heroItem}
-            className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg"
-          >
-            Upload a podcast, meeting, or lecture. Get a blog post, newsletter, social hooks, and chapters — all in seconds.
-          </motion.p>
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg animate-[fadeInUp_0.6s_ease-out_0.3s_both]">
+            Upload a podcast, meeting, or lecture. Get a blog post, newsletter,
+            social hooks, and chapters — all in seconds.
+          </p>
 
-          <motion.div
-            variants={heroItem}
-            className="mx-auto mt-10 max-w-lg"
-          >
+          <div className="mx-auto mt-10 max-w-lg animate-[fadeInUp_0.6s_ease-out_0.4s_both]">
             <div className="flex items-center gap-2 overflow-hidden rounded-2xl border border-border bg-surface p-2 shadow-lg backdrop-blur-sm">
               <input
                 type="text"
@@ -171,12 +158,9 @@ export function Hero() {
                 <ArrowRight className="size-4" />
               </Link>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={heroItem}
-            className="mx-auto mt-10 flex max-w-sm flex-col gap-3 sm:flex-row"
-          >
+          <div className="mx-auto mt-10 flex max-w-sm flex-col gap-3 sm:flex-row animate-[fadeInUp_0.6s_ease-out_0.5s_both]">
             <Link
               href="/auth/signup"
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-accent-secondary px-6 py-3.5 text-sm font-medium text-white shadow-md transition-all duration-200 hover:shadow-glow hover:brightness-110"
@@ -191,12 +175,9 @@ export function Hero() {
             >
               See how it works
             </Link>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={heroItem}
-            className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground"
-          >
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground animate-[fadeInUp_0.6s_ease-out_0.6s_both]">
             <span className="flex items-center gap-1.5">
               <span className="text-foreground font-medium">10x faster</span>
             </span>
@@ -208,8 +189,8 @@ export function Hero() {
             <span className="flex items-center gap-1.5">
               <span className="text-foreground font-medium">5+ formats</span>
             </span>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         <ProductMockup />
       </div>
