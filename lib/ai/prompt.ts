@@ -25,6 +25,12 @@ interface ProviderConfig {
 function getProviderChain(): ProviderConfig[] {
   const chain: ProviderConfig[] = [];
 
+  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    chain.push({
+      name: "Google/Gemini-3.6-Flash",
+      model: gemini("gemini-3.6-flash"),
+    });
+  }
   if (process.env.OPENROUTER_API_KEY) {
     chain.push({
       name: "OpenRouter/Nemotron",
@@ -35,12 +41,6 @@ function getProviderChain(): ProviderConfig[] {
     chain.push({
       name: "Groq/Llama-3.3-70B",
       model: groq("llama-3.3-70b-versatile"),
-    });
-  }
-  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    chain.push({
-      name: "Google/Gemini-2.0-Flash",
-      model: gemini("gemini-2.0-flash"),
     });
   }
 
